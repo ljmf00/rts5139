@@ -198,7 +198,7 @@ struct trace_msg_t {
 #define ILGAL_REQ               0x05	/* CDB/parameter/identify msg error */
 
 /*-----------------------------------
-    SENSE_DATA
+	SENSE_DATA
 -----------------------------------*/
 
 /*---- error code ----*/
@@ -342,7 +342,7 @@ struct rts51x_option {
 struct rts51x_chip;
 
 typedef int (*rts51x_card_rw_func) (struct scsi_cmnd *srb, struct rts51x_chip *chip,
-			     u32 sec_addr, u16 sec_cnt);
+	u32 sec_addr, u16 sec_cnt);
 
 /* For MS Card */
 #define    MAX_DEFECTIVE_BLOCK     10
@@ -420,7 +420,7 @@ struct xd_info {
 	(CHK_SD(sd_card) && ((sd_card)->sd_type & SD_HCXC))
 #define CHK_SD30_SPEED(sd_card)	\
 	(CHK_SD_SDR50(sd_card) || CHK_SD_DDR50(sd_card) ||\
-	 CHK_SD_SDR104(sd_card))
+	CHK_SD_SDR104(sd_card))
 
 #define SET_SD(sd_card)			((sd_card)->sd_type = TYPE_SD)
 #define SET_SD_HS(sd_card)		((sd_card)->sd_type |= SD_HS)
@@ -628,7 +628,7 @@ struct ms_info {
 struct scsi_cmnd;
 
 enum CHIP_STAT { STAT_INIT, STAT_IDLE, STAT_RUN, STAT_SS_PRE, STAT_SS,
-	    STAT_SUSPEND };
+	STAT_SUSPEND };
 
 struct rts51x_chip {
 	u16 vendor_id;
@@ -759,12 +759,12 @@ static inline void rts51x_init_cmd(struct rts51x_chip *chip)
 }
 
 void rts51x_add_cmd(struct rts51x_chip *chip,
-		    u8 cmd_type, u16 reg_addr, u8 mask, u8 data);
+			u8 cmd_type, u16 reg_addr, u8 mask, u8 data);
 int rts51x_send_cmd(struct rts51x_chip *chip, u8 flag, int timeout);
 int rts51x_get_rsp(struct rts51x_chip *chip, int rsp_len, int timeout);
 
 static inline void rts51x_read_rsp_buf(struct rts51x_chip *chip, int offset,
-				       u8 *buf, int buf_len)
+						u8 *buf, int buf_len)
 {
 	memcpy(buf, chip->rsp_buf + offset, buf_len);
 }
@@ -778,12 +778,12 @@ int rts51x_get_card_status(struct rts51x_chip *chip, u16 *status);
 int rts51x_write_register(struct rts51x_chip *chip, u16 addr, u8 mask, u8 data);
 int rts51x_read_register(struct rts51x_chip *chip, u16 addr, u8 *data);
 int rts51x_ep0_write_register(struct rts51x_chip *chip, u16 addr, u8 mask,
-			      u8 data);
+				u8 data);
 int rts51x_ep0_read_register(struct rts51x_chip *chip, u16 addr, u8 *data);
 int rts51x_seq_write_register(struct rts51x_chip *chip, u16 addr, u16 len,
-			      u8 *data);
+				u8 *data);
 int rts51x_seq_read_register(struct rts51x_chip *chip, u16 addr, u16 len,
-			     u8 *data);
+				u8 *data);
 int rts51x_read_ppbuf(struct rts51x_chip *chip, u8 *buf, int buf_len);
 int rts51x_write_ppbuf(struct rts51x_chip *chip, u8 *buf, int buf_len);
 int rts51x_write_phy_register(struct rts51x_chip *chip, u8 addr, u8 val);
@@ -793,12 +793,12 @@ void rts51x_clear_hw_error(struct rts51x_chip *chip);
 void rts51x_prepare_run(struct rts51x_chip *chip);
 void rts51x_trace_msg(struct rts51x_chip *chip, unsigned char *buf, int clear);
 void rts51x_pp_status(struct rts51x_chip *chip, unsigned int lun, u8 *status,
-		      u8 status_len);
+			u8 status_len);
 void rts51x_read_status(struct rts51x_chip *chip, unsigned int lun,
 			u8 *rts51x_status, u8 status_len);
 int rts51x_transfer_data_rcc(struct rts51x_chip *chip, unsigned int pipe,
-			     void *buf, unsigned int len, int use_sg,
-			     unsigned int *act_len, int timeout, u8 stage_flag);
+				void *buf, unsigned int len, int use_sg,
+				unsigned int *act_len, int timeout, u8 stage_flag);
 
 #define RTS51X_WRITE_REG(chip, addr, mask, data)	\
 do {							\

@@ -152,13 +152,13 @@ static inline void get_current_time(u8 *timeval_buf, int buf_len)
 
 /* Compatible macros while we switch over */
 static inline void *usb_buffer_alloc(struct usb_device *dev, size_t size,
-				     gfp_t mem_flags, dma_addr_t *dma)
+	gfp_t mem_flags, dma_addr_t *dma)
 {
 	return usb_alloc_coherent(dev, size, mem_flags, dma);
 }
 
 static inline void usb_buffer_free(struct usb_device *dev, size_t size,
-				   void *addr, dma_addr_t dma)
+	void *addr, dma_addr_t dma)
 {
 	return usb_free_coherent(dev, size, addr, dma);
 }

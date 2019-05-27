@@ -366,7 +366,7 @@ void rts51x_set_sense_type(struct rts51x_chip *chip, unsigned int lun, int sense
 
 	case SENSE_TYPE_MEDIA_INVALID_CMD_FIELD:
 		rts51x_set_sense_data(chip, lun, CUR_ERR, ILGAL_REQ, 0,
-			       ASC_INVLD_CDB, ASCQ_INVLD_CDB, CDB_ILLEGAL, 1);
+					ASC_INVLD_CDB, ASCQ_INVLD_CDB, CDB_ILLEGAL, 1);
 		break;
 
 	case SENSE_TYPE_FORMAT_CMD_FAILED:
@@ -399,8 +399,8 @@ void rts51x_set_sense_type(struct rts51x_chip *chip, unsigned int lun, int sense
 }
 
 void rts51x_set_sense_data(struct rts51x_chip *chip, unsigned int lun, u8 err_code,
-		    u8 sense_key, u32 info, u8 asc, u8 ascq, u8 sns_key_info0,
-		    u16 sns_key_info1)
+			u8 sense_key, u32 info, u8 asc, u8 ascq, u8 sns_key_info0,
+			u16 sns_key_info1)
 {
 	struct sense_data_t *sense = &(chip->sense_buffer[lun]);
 
@@ -563,7 +563,7 @@ static int allow_medium_removal(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 
 	if (prevent) {
 		rts51x_set_sense_type(chip, SCSI_LUN(srb),
-			       SENSE_TYPE_MEDIA_INVALID_CMD_FIELD);
+					SENSE_TYPE_MEDIA_INVALID_CMD_FIELD);
 		TRACE_RET(chip, TRANSPORT_FAILED);
 	}
 
@@ -571,7 +571,7 @@ static int allow_medium_removal(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 }
 
 static void ms_mode_sense(struct rts51x_chip *chip, u8 cmd,
-			  int lun, u8 *buf, int buf_len)
+				int lun, u8 *buf, int buf_len)
 {
 	struct ms_info *ms_card = &(chip->ms_card);
 	int sys_info_offset;
@@ -677,7 +677,7 @@ static int mode_sense(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 	pro_formatter_flag = 0;
 	dataSize = 8;
 	/* In Combo mode, device responses ModeSense command as a MS LUN
-	 * when no card is inserted */
+		* when no card is inserted */
 	if ((get_lun2card(chip, lun) & MS_CARD)) {
 		if (!card || (card == MS_CARD)) {
 			dataSize = 108;
@@ -693,11 +693,11 @@ static int mode_sense(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 	pageCode = srb->cmnd[2] & 0x3f;
 
 	if ((pageCode == 0x3F) || (pageCode == 0x1C) ||
-	    (pageCode == 0x00) || (pro_formatter_flag && (pageCode == 0x20))) {
+		(pageCode == 0x00) || (pro_formatter_flag && (pageCode == 0x20))) {
 		if (srb->cmnd[0] == MODE_SENSE) {
 			if ((pageCode == 0x3F) || (pageCode == 0x20)) {
 				ms_mode_sense(chip, srb->cmnd[0], lun, buf,
-					      dataSize);
+							dataSize);
 			} else {
 				dataSize = 4;
 				buf[0] = 0x03;
@@ -710,7 +710,7 @@ static int mode_sense(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 		} else {
 			if ((pageCode == 0x3F) || (pageCode == 0x20)) {
 				ms_mode_sense(chip, srb->cmnd[0], lun, buf,
-					      dataSize);
+							dataSize);
 			} else {
 				dataSize = 8;
 				buf[0] = 0x00;
@@ -753,7 +753,7 @@ static int request_sense(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 	sense = &(chip->sense_buffer[lun]);
 
 	if ((rts51x_get_lun_card(chip, lun) == MS_CARD)
-	    && PRO_UNDER_FORMATTING(ms_card)) {
+		&& PRO_UNDER_FORMATTING(ms_card)) {
 		rts51x_mspro_format_sense(chip, lun);
 	}
 
@@ -796,19 +796,19 @@ static int read_write(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 
 	if ((srb->cmnd[0] == READ_10) || (srb->cmnd[0] == WRITE_10)) {
 		start_sec =
-		    ((u32) srb->cmnd[2] << 24) |
-		    ((u32) srb->cmnd[3] << 16) |
-		    ((u32) srb->cmnd[4] << 8) |
-		    ((u32) srb->cmnd[5]);
+			((u32) srb->cmnd[2] << 24) |
+			((u32) srb->cmnd[3] << 16) |
+			((u32) srb->cmnd[4] << 8) |
+			((u32) srb->cmnd[5]);
 		sec_cnt = ((u16) (srb->cmnd[7]) << 8) | srb->cmnd[8];
 	} else if ((srb->cmnd[0] == READ_6) || (srb->cmnd[0] == WRITE_6)) {
 		start_sec = ((u32) (srb->cmnd[1] & 0x1F) << 16) |
-		    ((u32) srb->cmnd[2] << 8) | ((u32) srb->cmnd[3]);
+			((u32) srb->cmnd[2] << 8) | ((u32) srb->cmnd[3]);
 		sec_cnt = srb->cmnd[4];
 	} else if ((srb->cmnd[0] == VENDOR_CMND) &&
 			(srb->cmnd[1] == SCSI_APP_CMD) &&
 			((srb->cmnd[2] == PP_READ10) ||
-			 (srb->cmnd[2] == PP_WRITE10))) {
+				(srb->cmnd[2] == PP_WRITE10))) {
 		start_sec = ((u32) srb->cmnd[4] << 24) |
 			((u32) srb->cmnd[5] << 16) |
 			((u32) srb->cmnd[6] << 8) |
@@ -820,7 +820,7 @@ static int read_write(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 	}
 
 	if ((start_sec > chip->capacity[lun]) ||
-	    ((start_sec + sec_cnt) > chip->capacity[lun])) {
+		((start_sec + sec_cnt) > chip->capacity[lun])) {
 		rts51x_set_sense_type(chip, lun, SENSE_TYPE_MEDIA_LBA_OVER_RANGE);
 		TRACE_RET(chip, TRANSPORT_FAILED);
 	}
@@ -831,7 +831,7 @@ static int read_write(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 	}
 
 	if ((srb->sc_data_direction == DMA_TO_DEVICE)
-	    && check_card_wp(chip, lun)) {
+		&& check_card_wp(chip, lun)) {
 		RTS51X_DEBUGP("Write protected card!\n");
 		rts51x_set_sense_type(chip, lun, SENSE_TYPE_MEDIA_WRITE_PROTECT);
 		TRACE_RET(chip, TRANSPORT_FAILED);
@@ -841,7 +841,7 @@ static int read_write(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 	if (retval != STATUS_SUCCESS) {
 		if (srb->sc_data_direction == DMA_FROM_DEVICE) {
 			rts51x_set_sense_type(chip, lun,
-				       SENSE_TYPE_MEDIA_UNRECOVER_READ_ERR);
+						SENSE_TYPE_MEDIA_UNRECOVER_READ_ERR);
 		} else {
 			rts51x_set_sense_type(chip, lun, SENSE_TYPE_MEDIA_WRITE_ERR);
 		}
@@ -881,7 +881,7 @@ static int read_format_capacity(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 
 	/* Capacity List Length */
 	if ((buf_len > 12) && chip->option.rts51x_mspro_formatter_enable &&
-	    (chip->lun2card[lun] & MS_CARD) && (!card || (card == MS_CARD))) {
+		(chip->lun2card[lun] & MS_CARD) && (!card || (card == MS_CARD))) {
 		buf[i++] = 0x10;
 		desc_cnt = 2;
 	} else {
@@ -1025,7 +1025,7 @@ static int read_mem(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 		if (retval != STATUS_SUCCESS) {
 			vfree(buf);
 			rts51x_set_sense_type(chip, lun,
-				       SENSE_TYPE_MEDIA_UNRECOVER_READ_ERR);
+						SENSE_TYPE_MEDIA_UNRECOVER_READ_ERR);
 			TRACE_RET(chip, TRANSPORT_FAILED);
 		}
 	}
@@ -1066,7 +1066,7 @@ static int write_mem(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 
 	for (i = 0; i < len; i++) {
 		retval =
-		    rts51x_ep0_write_register(chip, addr + i, 0xFF, buf[i]);
+			rts51x_ep0_write_register(chip, addr + i, 0xFF, buf[i]);
 		if (retval != STATUS_SUCCESS) {
 			vfree(buf);
 			rts51x_set_sense_type(chip, lun, SENSE_TYPE_MEDIA_WRITE_ERR);
@@ -1120,7 +1120,7 @@ static int read_phy_register(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 
 		for (i = 0; i < len; i++) {
 			retval =
-			    rts51x_read_phy_register(chip, addr + i, buf + i);
+				rts51x_read_phy_register(chip, addr + i, buf + i);
 			if (retval != STATUS_SUCCESS) {
 				vfree(buf);
 				rts51x_set_sense_type(chip, SCSI_LUN(srb),
@@ -1163,11 +1163,11 @@ static int write_phy_register(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 
 		for (i = 0; i < len; i++) {
 			retval =
-			    rts51x_write_phy_register(chip, addr + i, buf[i]);
+				rts51x_write_phy_register(chip, addr + i, buf[i]);
 			if (retval != STATUS_SUCCESS) {
 				vfree(buf);
 				rts51x_set_sense_type(chip, SCSI_LUN(srb),
-					       SENSE_TYPE_MEDIA_WRITE_ERR);
+							SENSE_TYPE_MEDIA_WRITE_ERR);
 				TRACE_RET(chip, TRANSPORT_FAILED);
 			}
 		}
@@ -1210,12 +1210,12 @@ static int trace_msg_cmd(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 	unsigned int buf_len;
 
 	buf_len =
-	    4 +
-	    ((2 + MSG_FUNC_LEN + MSG_FILE_LEN + TIME_VAL_LEN) * TRACE_ITEM_CNT);
+		4 +
+		((2 + MSG_FUNC_LEN + MSG_FILE_LEN + TIME_VAL_LEN) * TRACE_ITEM_CNT);
 
 	if ((scsi_bufflen(srb) < buf_len) || (scsi_sglist(srb) == NULL)) {
 		rts51x_set_sense_type(chip, SCSI_LUN(srb),
-			       SENSE_TYPE_MEDIA_UNRECOVER_READ_ERR);
+					SENSE_TYPE_MEDIA_UNRECOVER_READ_ERR);
 		TRACE_RET(chip, TRANSPORT_FAILED);
 	}
 
@@ -1255,7 +1255,7 @@ static int rw_mem_cmd_buf(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 		cmd_type = srb->cmnd[4];
 		if (cmd_type > 2) {
 			rts51x_set_sense_type(chip, lun,
-				       SENSE_TYPE_MEDIA_INVALID_CMD_FIELD);
+						SENSE_TYPE_MEDIA_INVALID_CMD_FIELD);
 			TRACE_RET(chip, TRANSPORT_FAILED);
 		}
 		addr = (srb->cmnd[5] << 8) | srb->cmnd[6];
@@ -1268,13 +1268,13 @@ static int rw_mem_cmd_buf(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 		mode = srb->cmnd[4];
 		len = srb->cmnd[5];
 		timeout =
-		    ((u32) srb->cmnd[6] << 24) | ((u32) srb->
-						  cmnd[7] << 16) | ((u32) srb->
-								    cmnd[8] <<
-								    8) | ((u32)
-									  srb->
-									  cmnd
-									  [9]);
+			((u32) srb->cmnd[6] << 24) | ((u32) srb->
+							cmnd[7] << 16) | ((u32) srb->
+									cmnd[8] <<
+									8) | ((u32)
+										srb->
+										cmnd
+										[9]);
 		retval = rts51x_send_cmd(chip, mode, 1000);
 		if (retval != STATUS_SUCCESS) {
 			rts51x_set_sense_type(chip, lun, SENSE_TYPE_MEDIA_WRITE_ERR);
@@ -1295,7 +1295,7 @@ static int rw_mem_cmd_buf(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 		value = chip->rsp_buf[idx];
 		if (scsi_bufflen(srb) < 1) {
 			rts51x_set_sense_type(chip, lun,
-				       SENSE_TYPE_MEDIA_INVALID_CMD_FIELD);
+						SENSE_TYPE_MEDIA_INVALID_CMD_FIELD);
 			TRACE_RET(chip, TRANSPORT_FAILED);
 		}
 		rts51x_set_xfer_buf(&value, 1, srb);
@@ -1361,7 +1361,7 @@ static int app_cmd(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 
 	default:
 		rts51x_set_sense_type(chip, SCSI_LUN(srb),
-			       SENSE_TYPE_MEDIA_INVALID_CMD_FIELD);
+					SENSE_TYPE_MEDIA_INVALID_CMD_FIELD);
 		TRACE_RET(chip, TRANSPORT_FAILED);
 	}
 
@@ -1405,7 +1405,7 @@ static int vendor_cmnd(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 
 	default:
 		rts51x_set_sense_type(chip, SCSI_LUN(srb),
-			       SENSE_TYPE_MEDIA_INVALID_CMD_FIELD);
+					SENSE_TYPE_MEDIA_INVALID_CMD_FIELD);
 		TRACE_RET(chip, TRANSPORT_FAILED);
 	}
 
@@ -1424,8 +1424,8 @@ static int ms_format_cmnd(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 	}
 
 	if ((srb->cmnd[3] != 0x4D) || (srb->cmnd[4] != 0x47)
-	    || (srb->cmnd[5] != 0x66) || (srb->cmnd[6] != 0x6D)
-	    || (srb->cmnd[7] != 0x74)) {
+		|| (srb->cmnd[5] != 0x66) || (srb->cmnd[6] != 0x6D)
+		|| (srb->cmnd[7] != 0x74)) {
 		rts51x_set_sense_type(chip, lun, SENSE_TYPE_MEDIA_INVALID_CMD_FIELD);
 		TRACE_RET(chip, TRANSPORT_FAILED);
 	}
@@ -1483,16 +1483,16 @@ static int get_ms_information(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 	}
 
 	if ((srb->cmnd[2] != 0xB0) || (srb->cmnd[4] != 0x4D) ||
-	    (srb->cmnd[5] != 0x53) || (srb->cmnd[6] != 0x49) ||
-	    (srb->cmnd[7] != 0x44)) {
+		(srb->cmnd[5] != 0x53) || (srb->cmnd[6] != 0x49) ||
+		(srb->cmnd[7] != 0x44)) {
 		rts51x_set_sense_type(chip, lun, SENSE_TYPE_MEDIA_INVALID_CMD_FIELD);
 		TRACE_RET(chip, TRANSPORT_FAILED);
 	}
 
 	dev_info_id = srb->cmnd[3];
 	if ((CHK_MSXC(ms_card) && (dev_info_id == 0x10)) ||
-	    (!CHK_MSXC(ms_card) && (dev_info_id == 0x13)) ||
-	    !CHK_MSPRO(ms_card)) {
+		(!CHK_MSXC(ms_card) && (dev_info_id == 0x13)) ||
+		!CHK_MSPRO(ms_card)) {
 		rts51x_set_sense_type(chip, lun, SENSE_TYPE_MEDIA_INVALID_CMD_FIELD);
 		TRACE_RET(chip, TRANSPORT_FAILED);
 	}
@@ -1525,7 +1525,7 @@ static int get_ms_information(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 	buf[i++] = 0x01;
 
 	/*  Device Information Body
-	 *  Device Information ID Number */
+		*  Device Information ID Number */
 	buf[i++] = dev_info_id;
 	/* Device Information Length */
 	if (dev_info_id == 0x15)
@@ -1661,26 +1661,26 @@ static int mg_report_key(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 	switch (key_format) {
 	case KF_GET_LOC_EKB:
 		if ((scsi_bufflen(srb) == 0x41C) &&
-		    (srb->cmnd[8] == 0x04) && (srb->cmnd[9] == 0x1C)) {
+			(srb->cmnd[8] == 0x04) && (srb->cmnd[9] == 0x1C)) {
 			retval = rts51x_mg_get_local_EKB(srb, chip);
 			if (retval != STATUS_SUCCESS)
 				TRACE_RET(chip, TRANSPORT_FAILED);
 		} else {
 			rts51x_set_sense_type(chip, lun,
-				       SENSE_TYPE_MEDIA_INVALID_CMD_FIELD);
+						SENSE_TYPE_MEDIA_INVALID_CMD_FIELD);
 			TRACE_RET(chip, TRANSPORT_FAILED);
 		}
 		break;
 
 	case KF_RSP_CHG:
 		if ((scsi_bufflen(srb) == 0x24) &&
-		    (srb->cmnd[8] == 0x00) && (srb->cmnd[9] == 0x24)) {
+			(srb->cmnd[8] == 0x00) && (srb->cmnd[9] == 0x24)) {
 			retval = rts51x_mg_get_rsp_chg(srb, chip);
 			if (retval != STATUS_SUCCESS)
 				TRACE_RET(chip, TRANSPORT_FAILED);
 		} else {
 			rts51x_set_sense_type(chip, lun,
-				       SENSE_TYPE_MEDIA_INVALID_CMD_FIELD);
+						SENSE_TYPE_MEDIA_INVALID_CMD_FIELD);
 			TRACE_RET(chip, TRANSPORT_FAILED);
 		}
 		break;
@@ -1688,17 +1688,17 @@ static int mg_report_key(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 	case KF_GET_ICV:
 		ms_card->mg_entry_num = srb->cmnd[5];
 		if ((scsi_bufflen(srb) == 0x404) &&
-		    (srb->cmnd[8] == 0x04) &&
-		    (srb->cmnd[9] == 0x04) &&
-		    (srb->cmnd[2] == 0x00) &&
-		    (srb->cmnd[3] == 0x00) &&
-		    (srb->cmnd[4] == 0x00) && (srb->cmnd[5] < 32)) {
+			(srb->cmnd[8] == 0x04) &&
+			(srb->cmnd[9] == 0x04) &&
+			(srb->cmnd[2] == 0x00) &&
+			(srb->cmnd[3] == 0x00) &&
+			(srb->cmnd[4] == 0x00) && (srb->cmnd[5] < 32)) {
 			retval = rts51x_mg_get_ICV(srb, chip);
 			if (retval != STATUS_SUCCESS)
 				TRACE_RET(chip, TRANSPORT_FAILED);
 		} else {
 			rts51x_set_sense_type(chip, lun,
-				       SENSE_TYPE_MEDIA_INVALID_CMD_FIELD);
+						SENSE_TYPE_MEDIA_INVALID_CMD_FIELD);
 			TRACE_RET(chip, TRANSPORT_FAILED);
 		}
 		break;
@@ -1752,39 +1752,39 @@ static int mg_send_key(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 	switch (key_format) {
 	case KF_SET_LEAF_ID:
 		if ((scsi_bufflen(srb) == 0x0C) &&
-		    (srb->cmnd[8] == 0x00) && (srb->cmnd[9] == 0x0C)) {
+			(srb->cmnd[8] == 0x00) && (srb->cmnd[9] == 0x0C)) {
 			retval = rts51x_mg_set_leaf_id(srb, chip);
 			if (retval != STATUS_SUCCESS)
 				TRACE_RET(chip, TRANSPORT_FAILED);
 		} else {
 			rts51x_set_sense_type(chip, lun,
-				       SENSE_TYPE_MEDIA_INVALID_CMD_FIELD);
+						SENSE_TYPE_MEDIA_INVALID_CMD_FIELD);
 			TRACE_RET(chip, TRANSPORT_FAILED);
 		}
 		break;
 
 	case KF_CHG_HOST:
 		if ((scsi_bufflen(srb) == 0x0C) &&
-		    (srb->cmnd[8] == 0x00) && (srb->cmnd[9] == 0x0C)) {
+			(srb->cmnd[8] == 0x00) && (srb->cmnd[9] == 0x0C)) {
 			retval = rts51x_mg_chg(srb, chip);
 			if (retval != STATUS_SUCCESS)
 				TRACE_RET(chip, TRANSPORT_FAILED);
 		} else {
 			rts51x_set_sense_type(chip, lun,
-				       SENSE_TYPE_MEDIA_INVALID_CMD_FIELD);
+						SENSE_TYPE_MEDIA_INVALID_CMD_FIELD);
 			TRACE_RET(chip, TRANSPORT_FAILED);
 		}
 		break;
 
 	case KF_RSP_HOST:
 		if ((scsi_bufflen(srb) == 0x0C) &&
-		    (srb->cmnd[8] == 0x00) && (srb->cmnd[9] == 0x0C)) {
+			(srb->cmnd[8] == 0x00) && (srb->cmnd[9] == 0x0C)) {
 			retval = rts51x_mg_rsp(srb, chip);
 			if (retval != STATUS_SUCCESS)
 				TRACE_RET(chip, TRANSPORT_FAILED);
 		} else {
 			rts51x_set_sense_type(chip, lun,
-				       SENSE_TYPE_MEDIA_INVALID_CMD_FIELD);
+						SENSE_TYPE_MEDIA_INVALID_CMD_FIELD);
 			TRACE_RET(chip, TRANSPORT_FAILED);
 		}
 		break;
@@ -1792,17 +1792,17 @@ static int mg_send_key(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 	case KF_SET_ICV:
 		ms_card->mg_entry_num = srb->cmnd[5];
 		if ((scsi_bufflen(srb) == 0x404) &&
-		    (srb->cmnd[8] == 0x04) &&
-		    (srb->cmnd[9] == 0x04) &&
-		    (srb->cmnd[2] == 0x00) &&
-		    (srb->cmnd[3] == 0x00) &&
-		    (srb->cmnd[4] == 0x00) && (srb->cmnd[5] < 32)) {
+			(srb->cmnd[8] == 0x04) &&
+			(srb->cmnd[9] == 0x04) &&
+			(srb->cmnd[2] == 0x00) &&
+			(srb->cmnd[3] == 0x00) &&
+			(srb->cmnd[4] == 0x00) && (srb->cmnd[5] < 32)) {
 			retval = rts51x_mg_set_ICV(srb, chip);
 			if (retval != STATUS_SUCCESS)
 				TRACE_RET(chip, TRANSPORT_FAILED);
 		} else {
 			rts51x_set_sense_type(chip, lun,
-				       SENSE_TYPE_MEDIA_INVALID_CMD_FIELD);
+						SENSE_TYPE_MEDIA_INVALID_CMD_FIELD);
 			TRACE_RET(chip, TRANSPORT_FAILED);
 		}
 		break;
@@ -1824,12 +1824,12 @@ int rts51x_scsi_handler(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 	int result = TRANSPORT_GOOD;
 
 	if ((rts51x_get_lun_card(chip, lun) == MS_CARD) &&
-	    (ms_card->format_status == FORMAT_IN_PROGRESS)) {
+		(ms_card->format_status == FORMAT_IN_PROGRESS)) {
 		if ((srb->cmnd[0] != REQUEST_SENSE)
-		    && (srb->cmnd[0] != INQUIRY)) {
+			&& (srb->cmnd[0] != INQUIRY)) {
 			/* Logical Unit Not Ready Format in Progress */
 			rts51x_set_sense_data(chip, lun, CUR_ERR, 0x02, 0, 0x04, 0x04,
-				       0, (u16) (ms_card->progress));
+						0, (u16) (ms_card->progress));
 			TRACE_RET(chip, TRANSPORT_FAILED);
 		}
 	}
@@ -1925,10 +1925,10 @@ int rts51x_scsi_handler(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 int slave_alloc(struct scsi_device *sdev)
 {
 	/*
-	 * Set the INQUIRY transfer length to 36.  We don't use any of
-	 * the extra data and many devices choke if asked for more or
-	 * less than 36 bytes.
-	 */
+		* Set the INQUIRY transfer length to 36.  We don't use any of
+		* the extra data and many devices choke if asked for more or
+		* less than 36 bytes.
+		*/
 	sdev->inquiry_len = 36;
 	return 0;
 }
@@ -1936,29 +1936,29 @@ int slave_alloc(struct scsi_device *sdev)
 int slave_configure(struct scsi_device *sdev)
 {
 	/* Scatter-gather buffers (all but the last) must have a length
-	 * divisible by the bulk maxpacket size.  Otherwise a data packet
-	 * would end up being short, causing a premature end to the data
-	 * transfer.  Since high-speed bulk pipes have a maxpacket size
-	 * of 512, we'll use that as the scsi device queue's DMA alignment
-	 * mask.  Guaranteeing proper alignment of the first buffer will
-	 * have the desired effect because, except at the beginning and
-	 * the end, scatter-gather buffers follow page boundaries. */
+		* divisible by the bulk maxpacket size.  Otherwise a data packet
+		* would end up being short, causing a premature end to the data
+		* transfer.  Since high-speed bulk pipes have a maxpacket size
+		* of 512, we'll use that as the scsi device queue's DMA alignment
+		* mask.  Guaranteeing proper alignment of the first buffer will
+		* have the desired effect because, except at the beginning and
+		* the end, scatter-gather buffers follow page boundaries. */
 	blk_queue_dma_alignment(sdev->request_queue, (512 - 1));
 
 	/* Set the SCSI level to at least 2.  We'll leave it at 3 if that's
-	 * what is originally reported.  We need this to avoid confusing
-	 * the SCSI layer with devices that report 0 or 1, but need 10-byte
-	 * commands (ala ATAPI devices behind certain bridges, or devices
-	 * which simply have broken INQUIRY data).
-	 *
-	 * NOTE: This means /dev/sg programs (ala cdrecord) will get the
-	 * actual information.  This seems to be the preference for
-	 * programs like that.
-	 *
-	 * NOTE: This also means that /proc/scsi/scsi and sysfs may report
-	 * the actual value or the modified one, depending on where the
-	 * data comes from.
-	 */
+		* what is originally reported.  We need this to avoid confusing
+		* the SCSI layer with devices that report 0 or 1, but need 10-byte
+		* commands (ala ATAPI devices behind certain bridges, or devices
+		* which simply have broken INQUIRY data).
+		*
+		* NOTE: This means /dev/sg programs (ala cdrecord) will get the
+		* actual information.  This seems to be the preference for
+		* programs like that.
+		*
+		* NOTE: This also means that /proc/scsi/scsi and sysfs may report
+		* the actual value or the modified one, depending on where the
+		* data comes from.
+		*/
 	if (sdev->scsi_level < SCSI_2)
 		sdev->scsi_level = sdev->sdev_target->scsi_level = SCSI_2;
 
@@ -2000,7 +2000,7 @@ int queuecommand_lck(struct scsi_cmnd *srb, void (*done) (struct scsi_cmnd *))
 	/* check for state-transition errors */
 	if (chip->srb != NULL) {
 		RTS51X_DEBUGP("Error in %s: chip->srb = %p\n",
-			       __func__, chip->srb);
+					__func__, chip->srb);
 		return SCSI_MLQUEUE_HOST_BUSY;
 	}
 
@@ -2032,7 +2032,7 @@ int command_abort(struct scsi_cmnd *srb)
 	RTS51X_DEBUGP("%s called\n", __func__);
 
 	/* us->srb together with the TIMED_OUT, RESETTING, and ABORTING
-	 * bits are protected by the host lock. */
+		* bits are protected by the host lock. */
 	scsi_lock(rts51x_to_host(chip));
 
 	/* Is this command still active? */
@@ -2043,10 +2043,10 @@ int command_abort(struct scsi_cmnd *srb)
 	}
 
 	/* Set the TIMED_OUT bit.  Also set the ABORTING bit, but only if
-	 * a device reset isn't already in progress (to avoid interfering
-	 * with the reset).  Note that we must retain the host lock while
-	 * calling usb_stor_stop_transport(); otherwise it might interfere
-	 * with an auto-reset that begins as soon as we release the lock. */
+		* a device reset isn't already in progress (to avoid interfering
+		* with the reset).  Note that we must retain the host lock while
+		* calling usb_stor_stop_transport(); otherwise it might interfere
+		* with an auto-reset that begins as soon as we release the lock. */
 	set_bit(FLIDX_TIMED_OUT, &chip->usb->dflags);
 	if (!test_bit(FLIDX_RESETTING, &chip->usb->dflags)) {
 		set_bit(FLIDX_ABORTING, &chip->usb->dflags);
@@ -2129,4 +2129,3 @@ struct scsi_host_template rts51x_host_template = {
 	/* module management */
 	.module = THIS_MODULE
 };
-

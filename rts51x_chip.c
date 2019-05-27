@@ -16,11 +16,11 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author:
- *   wwang (wei_wang@realsil.com.cn)
- *   No. 450, Shenhu Road, Suzhou Industry Park, Suzhou, China
+ *	wwang (wei_wang@realsil.com.cn)
+ *	No. 450, Shenhu Road, Suzhou Industry Park, Suzhou, China
  * Maintainer:
- *   Edwin Rong (edwin_rong@realsil.com.cn)
- *   No. 450, Shenhu Road, Suzhou Industry Park, Suzhou, China
+ *	Edwin Rong (edwin_rong@realsil.com.cn)
+ *	No. 450, Shenhu Road, Suzhou Industry Park, Suzhou, China
  */
 
 #include <linux/blkdev.h>
@@ -60,9 +60,9 @@ int rts51x_reset_chip(struct rts51x_chip *chip)
 
 	if (CHECK_PKG(chip, LQFP48)) {
 		RTS51X_WRITE_REG(chip, CARD_PWR_CTL, LDO3318_PWR_MASK,
-				 LDO_SUSPEND);
+			LDO_SUSPEND);
 		RTS51X_WRITE_REG(chip, CARD_PWR_CTL, FORCE_LDO_POWERB,
-				 FORCE_LDO_POWERB);
+			FORCE_LDO_POWERB);
 		RTS51X_WRITE_REG(chip, CARD_PULL_CTL1, 0x30, 0x10);
 		RTS51X_WRITE_REG(chip, CARD_PULL_CTL5, 0x03, 0x01);
 		RTS51X_WRITE_REG(chip, CARD_PULL_CTL6, 0x0C, 0x04);
@@ -71,25 +71,25 @@ int rts51x_reset_chip(struct rts51x_chip *chip)
 		RTS51X_WRITE_REG(chip, SYS_DUMMY0, NYET_MSAK, NYET_EN);
 		RTS51X_WRITE_REG(chip, CD_DEGLITCH_WIDTH, 0xFF, 0x08);
 		rts51x_write_register(chip, CD_DEGLITCH_EN, XD_CD_DEGLITCH_EN,
-				      0x00);
+				0x00);
 		rts51x_write_register(chip, SD30_DRIVE_SEL, SD30_DRIVE_MASK,
-				      chip->option.sd30_pad_drive);
+				chip->option.sd30_pad_drive);
 		rts51x_write_register(chip, CARD_DRIVE_SEL, SD20_DRIVE_MASK,
-				      chip->option.sd20_pad_drive);
+				chip->option.sd20_pad_drive);
 		if (chip->rts5179)
 			rts51x_write_register(chip, CARD_PULL_CTL5, 0x03, 0x01);
 		if (CHECK_PKG(chip, LQFP48)) {
 			rts51x_write_register(chip, CARD_PULL_CTL3,
-					      0x80, 0x80);
+					0x80, 0x80);
 			rts51x_write_register(chip, CARD_PULL_CTL6,
-					      0xf0, 0xA0);
+					0xf0, 0xA0);
 		} else {
 			rts51x_write_register(chip, CARD_PULL_CTL1,
-					      0x30, 0x20);
+					0x30, 0x20);
 			rts51x_write_register(chip, CARD_PULL_CTL3,
-					      0x80, 0x80);
+					0x80, 0x80);
 			rts51x_write_register(chip, CARD_PULL_CTL6,
-					      0x0c, 0x08);
+					0x0c, 0x08);
 		}
 	}
 	if (chip->option.sd_ctl & SUPPORT_UHS50_MMC44) {
@@ -99,7 +99,7 @@ int rts51x_reset_chip(struct rts51x_chip *chip)
 	} else {
 		/* if(CHECK_PID(chip, 0x0139)&&CHECK_PKG(chip, LQFP48)) */
 		if ((CHECK_PID(chip, 0x0139) && CHECK_PKG(chip, LQFP48))
-		    || chip->rts5179) {
+		|| chip->rts5179) {
 			SET_UHS50(chip);
 			RTS51X_DEBUGP("PID enable UHS50&MMC44\n");
 		} else {
@@ -119,7 +119,7 @@ int rts51x_reset_chip(struct rts51x_chip *chip)
 	/* GPIO OE */
 	rts51x_add_cmd(chip, WRITE_REG_CMD, CARD_GPIO, GPIO_OE, GPIO_OE);
 	rts51x_add_cmd(chip, WRITE_REG_CMD, CARD_DMA1_CTL,
-		       EXTEND_DMA1_ASYNC_SIGNAL, EXTEND_DMA1_ASYNC_SIGNAL);
+	EXTEND_DMA1_ASYNC_SIGNAL, EXTEND_DMA1_ASYNC_SIGNAL);
 
 	retval = rts51x_send_cmd(chip, MODE_C, 100);
 	if (retval != STATUS_SUCCESS)
@@ -127,7 +127,7 @@ int rts51x_reset_chip(struct rts51x_chip *chip)
 #ifdef SUPPORT_OCP
 	if (chip->asic_code) {
 		rts51x_write_register(chip, OCPCTL, MS_OCP_DETECT_EN,
-				      MS_OCP_DETECT_EN);
+				MS_OCP_DETECT_EN);
 		RTS51X_DEBUGP("Enable OCP detect!\n");
 	}
 #endif
@@ -175,7 +175,7 @@ int rts51x_init_chip(struct rts51x_chip *chip)
 	if (!check_sd_speed_prior(chip->option.sd_speed_prior))
 		chip->option.sd_speed_prior = 0x01020403;
 	RTS51X_DEBUGP("sd_speed_prior = 0x%08x\n",
-		       chip->option.sd_speed_prior);
+	chip->option.sd_speed_prior);
 
 	RTS51X_READ_REG(chip, CARD_SHARE_MODE, &val);
 	if (val & CARD_SHARE_LQFP_SEL) {
@@ -252,17 +252,17 @@ static void rts51x_auto_delink_polling_cycle(struct rts51x_chip *chip)
 	if (chip->auto_delink_counter <=
 			chip->option.delink_delay * 2) {
 		if (chip->auto_delink_counter ==
-		    chip->option.delink_delay) {
+		chip->option.delink_delay) {
 			if (chip->card_exist) {
 				/* False card */
 				if (!chip->card_ejected) {
 					/* if card is not ejected or safely
-					 * remove,then do force delink */
+				* remove,then do force delink */
 					RTS51X_DEBUGP("False card inserted,"
 							"do force delink\n");
 					rts51x_auto_delink_force_cmd(chip);
 					chip->auto_delink_counter =
-					    chip->option.delink_delay * 2 + 1;
+					chip->option.delink_delay * 2 + 1;
 				}
 			} else {
 				RTS51X_DEBUGP("No card inserted, do delink\n");
@@ -272,7 +272,7 @@ static void rts51x_auto_delink_polling_cycle(struct rts51x_chip *chip)
 			}
 		}
 		if (chip->auto_delink_counter ==
-		    chip->option.delink_delay * 2) {
+		chip->option.delink_delay * 2) {
 			RTS51X_DEBUGP("Try to do force delink\n");
 			rts51x_auto_delink_force_cmd(chip);
 		}
@@ -320,17 +320,17 @@ void rts51x_polling_func(struct rts51x_chip *chip)
 			RTS51X_SET_STAT(chip, STAT_IDLE);
 			chip->led_toggle_counter = 0;
 			/* Idle state, turn off LED
-			 * to reduce power consumption */
+		* to reduce power consumption */
 			if (chip->option.led_always_on
-			    && (chip->card_exist &
+			&& (chip->card_exist &
 				(SD_CARD | MS_CARD | XD_CARD))
-			    && (!chip->card_ejected)) {
+			&& (!chip->card_ejected)) {
 				rts51x_turn_on_led(chip, LED_GPIO);
 			} else {
 				if (chip->rts5179) {
 					rts51x_ep0_write_register(chip,
-								  CARD_GPIO,
-								  0x03, 0x00);
+							CARD_GPIO,
+							0x03, 0x00);
 				} else {
 					rts51x_turn_off_led(chip, LED_GPIO);
 				}
@@ -340,10 +340,10 @@ void rts51x_polling_func(struct rts51x_chip *chip)
 #ifdef CLOSE_SSC_POWER
 			if (!chip->card_ready) {
 				rts51x_write_register(chip, CLK_DIV, CLK_CHANGE,
-						      CLK_CHANGE);
+						CLK_CHANGE);
 				rts51x_write_register(chip, FPDCTL,
-						      SSC_POWER_MASK,
-						      SSC_POWER_DOWN);
+						SSC_POWER_MASK,
+						SSC_POWER_DOWN);
 				RTS51X_DEBUGP("Close SSC clock power!\n");
 			}
 #endif
@@ -370,14 +370,14 @@ void rts51x_polling_func(struct rts51x_chip *chip)
 }
 
 void rts51x_add_cmd(struct rts51x_chip *chip,
-		    u8 cmd_type, u16 reg_addr, u8 mask, u8 data)
+		u8 cmd_type, u16 reg_addr, u8 mask, u8 data)
 {
 	int i;
 
 	if (chip->cmd_idx < ((CMD_BUF_LEN - CMD_OFFSET) / 4)) {
 		i = CMD_OFFSET + chip->cmd_idx * 4;
 		chip->cmd_buf[i++] =
-		    ((cmd_type & 0x03) << 6) | (u8) ((reg_addr >> 8) & 0x3F);
+		((cmd_type & 0x03) << 6) | (u8) ((reg_addr >> 8) & 0x3F);
 		chip->cmd_buf[i++] = (u8) reg_addr;
 		chip->cmd_buf[i++] = mask;
 		chip->cmd_buf[i++] = data;
@@ -394,9 +394,9 @@ int rts51x_send_cmd(struct rts51x_chip *chip, u8 flag, int timeout)
 	chip->cmd_buf[STAGE_FLAG] = flag;
 
 	result = rts51x_transfer_data_rcc(chip, SND_BULK_PIPE(chip),
-					  (void *)(chip->cmd_buf),
-					  chip->cmd_idx * 4 + CMD_OFFSET,
-					  0, NULL, timeout, MODE_C);
+				(void *)(chip->cmd_buf),
+				chip->cmd_idx * 4 + CMD_OFFSET,
+				0, NULL, timeout, MODE_C);
 	if (result != STATUS_SUCCESS)
 		TRACE_RET(chip, result);
 
@@ -414,8 +414,8 @@ int rts51x_get_rsp(struct rts51x_chip *chip, int rsp_len, int timeout)
 		rsp_len += (4 - rsp_len % 4);
 
 	result = rts51x_transfer_data_rcc(chip, RCV_BULK_PIPE(chip),
-					  (void *)chip->rsp_buf, rsp_len,
-					  0, NULL, timeout, STAGE_R);
+				(void *)chip->rsp_buf, rsp_len,
+				0, NULL, timeout, STAGE_R);
 	if (result != STATUS_SUCCESS)
 		TRACE_RET(chip, result);
 
@@ -434,7 +434,7 @@ int rts51x_get_card_status(struct rts51x_chip *chip, u16 *status)
 		TRACE_RET(chip, retval);
 #else
 	retval = rts51x_ctrl_transfer(chip, RCV_CTRL_PIPE(chip), 0x02, 0xC0,
-				      0, 0, &val, 2, 100);
+				0, 0, &val, 2, 100);
 	if (retval != STATUS_SUCCESS)
 		TRACE_RET(chip, retval);
 #endif
@@ -482,7 +482,7 @@ int rts51x_read_register(struct rts51x_chip *chip, u16 addr, u8 *data)
 }
 
 int rts51x_ep0_write_register(struct rts51x_chip *chip, u16 addr, u8 mask,
-			      u8 data)
+			u8 data)
 {
 	int retval;
 	u16 value = 0, index = 0;
@@ -493,8 +493,8 @@ int rts51x_ep0_write_register(struct rts51x_chip *chip, u16 addr, u8 mask,
 	index |= (u16) data;
 
 	retval = rts51x_ctrl_transfer(chip, SND_CTRL_PIPE(chip), 0x00, 0x40,
-				      cpu_to_be16(value), cpu_to_be16(index),
-				      NULL, 0, 100);
+				cpu_to_be16(value), cpu_to_be16(index),
+				NULL, 0, 100);
 	if (retval != STATUS_SUCCESS)
 		TRACE_RET(chip, retval);
 
@@ -514,7 +514,7 @@ int rts51x_ep0_read_register(struct rts51x_chip *chip, u16 addr, u8 *data)
 	value |= (u16) (addr & 0x3FFF);
 
 	retval = rts51x_ctrl_transfer(chip, RCV_CTRL_PIPE(chip), 0x00, 0xC0,
-				      cpu_to_be16(value), 0, &val, 1, 100);
+				cpu_to_be16(value), 0, &val, 1, 100);
 	if (retval != STATUS_SUCCESS)
 		TRACE_RET(chip, retval);
 
@@ -525,7 +525,7 @@ int rts51x_ep0_read_register(struct rts51x_chip *chip, u16 addr, u8 *data)
 }
 
 int rts51x_seq_write_register(struct rts51x_chip *chip, u16 addr, u16 len,
-			      u8 *data)
+			u8 *data)
 {
 	int result;
 	u16 cmd_len = len + 12;
@@ -553,8 +553,8 @@ int rts51x_seq_write_register(struct rts51x_chip *chip, u16 addr, u16 len,
 	memcpy(chip->cmd_buf + 12, data, len);
 
 	result = rts51x_transfer_data_rcc(chip, SND_BULK_PIPE(chip),
-					  (void *)(chip->cmd_buf), cmd_len, 0,
-					  NULL, 100, MODE_C);
+				(void *)(chip->cmd_buf), cmd_len, 0,
+				NULL, 100, MODE_C);
 	if (result != STATUS_SUCCESS)
 		TRACE_RET(chip, result);
 
@@ -562,7 +562,7 @@ int rts51x_seq_write_register(struct rts51x_chip *chip, u16 addr, u16 len,
 }
 
 int rts51x_seq_read_register(struct rts51x_chip *chip, u16 addr, u16 len,
-			     u8 *data)
+			u8 *data)
 {
 	int result;
 	u16 rsp_len;
@@ -587,14 +587,14 @@ int rts51x_seq_read_register(struct rts51x_chip *chip, u16 addr, u16 len,
 	chip->cmd_buf[9] = (u8) addr;
 
 	result = rts51x_transfer_data_rcc(chip, SND_BULK_PIPE(chip),
-					  (void *)(chip->cmd_buf), 12, 0, NULL,
-					  100, MODE_C);
+				(void *)(chip->cmd_buf), 12, 0, NULL,
+				100, MODE_C);
 	if (result != STATUS_SUCCESS)
 		TRACE_RET(chip, result);
 
 	result = rts51x_transfer_data_rcc(chip, RCV_BULK_PIPE(chip),
-					  (void *)data, rsp_len, 0, NULL, 100,
-					  STAGE_DI);
+				(void *)data, rsp_len, 0, NULL, 100,
+				STAGE_DI);
 	if (result != STATUS_SUCCESS)
 		TRACE_RET(chip, result);
 
@@ -609,7 +609,7 @@ int rts51x_read_ppbuf(struct rts51x_chip *chip, u8 *buf, int buf_len)
 		TRACE_RET(chip, STATUS_ERROR);
 
 	retval =
-	    rts51x_seq_read_register(chip, PPBUF_BASE2, (u16) buf_len, buf);
+	rts51x_seq_read_register(chip, PPBUF_BASE2, (u16) buf_len, buf);
 	if (retval != STATUS_SUCCESS)
 		TRACE_RET(chip, retval);
 
@@ -624,7 +624,7 @@ int rts51x_write_ppbuf(struct rts51x_chip *chip, u8 *buf, int buf_len)
 		TRACE_RET(chip, STATUS_ERROR);
 
 	retval =
-	    rts51x_seq_write_register(chip, PPBUF_BASE2, (u16) buf_len, buf);
+	rts51x_seq_write_register(chip, PPBUF_BASE2, (u16) buf_len, buf);
 	if (retval != STATUS_SUCCESS)
 		TRACE_RET(chip, retval);
 
@@ -645,7 +645,7 @@ int rts51x_write_phy_register(struct rts51x_chip *chip, u8 addr, u8 val)
 	rts51x_add_cmd(chip, WRITE_REG_CMD, HS_VLOADM, 0xFF, 0x00);
 	rts51x_add_cmd(chip, WRITE_REG_CMD, HS_VLOADM, 0xFF, 0x01);
 	rts51x_add_cmd(chip, WRITE_REG_CMD, HS_VCONTROL, 0xFF,
-		       (addr >> 4) & 0x0F);
+	(addr >> 4) & 0x0F);
 	rts51x_add_cmd(chip, WRITE_REG_CMD, HS_VLOADM, 0xFF, 0x00);
 	rts51x_add_cmd(chip, WRITE_REG_CMD, HS_VLOADM, 0xFF, 0x00);
 	rts51x_add_cmd(chip, WRITE_REG_CMD, HS_VLOADM, 0xFF, 0x01);
@@ -670,7 +670,7 @@ int rts51x_read_phy_register(struct rts51x_chip *chip, u8 addr, u8 *val)
 	rts51x_add_cmd(chip, WRITE_REG_CMD, HS_VLOADM, 0xFF, 0x00);
 	rts51x_add_cmd(chip, WRITE_REG_CMD, HS_VLOADM, 0xFF, 0x01);
 	rts51x_add_cmd(chip, WRITE_REG_CMD, HS_VCONTROL, 0xFF,
-		       (addr >> 4) & 0x0F);
+	(addr >> 4) & 0x0F);
 	rts51x_add_cmd(chip, WRITE_REG_CMD, HS_VLOADM, 0xFF, 0x00);
 	rts51x_add_cmd(chip, WRITE_REG_CMD, HS_VLOADM, 0xFF, 0x00);
 	rts51x_add_cmd(chip, WRITE_REG_CMD, HS_VLOADM, 0xFF, 0x01);
@@ -724,7 +724,7 @@ void rts51x_do_before_power_down(struct rts51x_chip *chip)
 	}
 	if (CHECK_PKG(chip, LQFP48))
 		rts51x_write_register(chip, CARD_PWR_CTL, LDO3318_PWR_MASK,
-				      LDO_OFF);
+				LDO_OFF);
 }
 
 void rts51x_clear_hw_error(struct rts51x_chip *chip)
@@ -737,7 +737,7 @@ void rts51x_prepare_run(struct rts51x_chip *chip)
 #ifdef CLOSE_SSC_POWER
 	if (RTS51X_CHK_STAT(chip, STAT_IDLE) && (!chip->card_ready)) {
 		rts51x_write_register(chip, FPDCTL, SSC_POWER_MASK,
-				      SSC_POWER_ON);
+				SSC_POWER_ON);
 		udelay(100);
 		RTS51X_DEBUGP("Open SSC clock power.\n");
 
@@ -793,7 +793,7 @@ void rts51x_trace_msg(struct rts51x_chip *chip, unsigned char *buf, int clear)
 #endif
 
 void rts51x_pp_status(struct rts51x_chip *chip, unsigned int lun, u8 *status,
-		      u8 status_len)
+		u8 status_len)
 {
 	struct sd_info *sd_card = &(chip->sd_card);
 	struct ms_info *ms_card = &(chip->ms_card);
@@ -890,15 +890,15 @@ void rts51x_pp_status(struct rts51x_chip *chip, unsigned int lun, u8 *status,
 	}
 
 	/* Function 0
-	 * Support Magic Gate, CPRM and PhyRegister R/W */
+* Support Magic Gate, CPRM and PhyRegister R/W */
 	status[0x18] = 0x8A;
 
 	/* Function 2
-	 * Support OC LUN status & WP LUN status */
+* Support OC LUN status & WP LUN status */
 	status[0x1A] = 0x28;
 
 	/* Function 2
-	 * Support OC LUN status & WP LUN status */
+* Support OC LUN status & WP LUN status */
 	status[0x1A] = 0x28;
 }
 
@@ -1000,14 +1000,14 @@ void rts51x_read_status(struct rts51x_chip *chip, unsigned int lun,
 }
 
 int rts51x_transfer_data_rcc(struct rts51x_chip *chip, unsigned int pipe,
-			     void *buf, unsigned int len, int use_sg,
-			     unsigned int *act_len, int timeout, u8 stage_flag)
+			void *buf, unsigned int len, int use_sg,
+			unsigned int *act_len, int timeout, u8 stage_flag)
 {
 	int retval;
 
 	retval =
-	    rts51x_transfer_data(chip, pipe, buf, len, use_sg, act_len,
-				 timeout);
+	rts51x_transfer_data(chip, pipe, buf, len, use_sg, act_len,
+			timeout);
 
 	return retval;
 

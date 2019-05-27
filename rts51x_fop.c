@@ -43,7 +43,7 @@
 #define RTS5139_IOC_SD_GET_RSP		_IOWR(RTS5139_IOC_MAGIC, 0xA1, int)
 
 static int rts51x_sd_direct_cmnd(struct rts51x_chip *chip,
-				 struct sd_direct_cmnd *cmnd)
+				struct sd_direct_cmnd *cmnd)
 {
 	int retval;
 	u8 dir, cmd12, standby, acmd, cmd_idx, rsp_code;
@@ -56,10 +56,10 @@ static int rts51x_sd_direct_cmnd(struct rts51x_chip *chip,
 	acmd = cmnd->cmnd[0] & 0x01;
 	cmd_idx = cmnd->cmnd[1];
 	arg = ((u32) (cmnd->cmnd[2]) << 24) | ((u32) (cmnd->cmnd[3]) << 16) |
-	    ((u32) (cmnd->cmnd[4]) << 8) | cmnd->cmnd[5];
+		((u32) (cmnd->cmnd[4]) << 8) | cmnd->cmnd[5];
 	len =
-	    ((u32) (cmnd->cmnd[6]) << 16) | ((u32) (cmnd->cmnd[7]) << 8) |
-	    cmnd->cmnd[8];
+		((u32) (cmnd->cmnd[6]) << 16) | ((u32) (cmnd->cmnd[7]) << 8) |
+		cmnd->cmnd[8];
 	rsp_code = cmnd->cmnd[9];
 
 	if (dir) {
@@ -84,16 +84,16 @@ static int rts51x_sd_direct_cmnd(struct rts51x_chip *chip,
 			TRACE_RET(chip, STATUS_NOMEM);
 
 		retval = ext_rts51x_sd_execute_read_data(chip, chip->card2lun[SD_CARD],
-						  cmd_idx, cmd12, standby, acmd,
-						  rsp_code, arg, len, buf,
-						  cmnd->buf_len, 0);
+							cmd_idx, cmd12, standby, acmd,
+							rsp_code, arg, len, buf,
+							cmnd->buf_len, 0);
 		if (retval != TRANSPORT_GOOD) {
 			kfree(buf);
 			TRACE_RET(chip, STATUS_FAIL);
 		}
 
 		retval =
-		    copy_to_user((void *)cmnd->buf, (void *)buf, cmnd->buf_len);
+			copy_to_user((void *)cmnd->buf, (void *)buf, cmnd->buf_len);
 		if (retval) {
 			kfree(buf);
 			TRACE_RET(chip, STATUS_NOMEM);
@@ -109,18 +109,18 @@ static int rts51x_sd_direct_cmnd(struct rts51x_chip *chip,
 			TRACE_RET(chip, STATUS_NOMEM);
 
 		retval =
-		    copy_from_user((void *)buf, (void *)cmnd->buf,
-				   cmnd->buf_len);
+			copy_from_user((void *)buf, (void *)cmnd->buf,
+					cmnd->buf_len);
 		if (retval) {
 			kfree(buf);
 			TRACE_RET(chip, STATUS_NOMEM);
 		}
 
 		retval =
-		    ext_rts51x_sd_execute_write_data(chip, chip->card2lun[SD_CARD],
-					      cmd_idx, cmd12, standby, acmd,
-					      rsp_code, arg, len, buf,
-					      cmnd->buf_len, 0);
+			ext_rts51x_sd_execute_write_data(chip, chip->card2lun[SD_CARD],
+							cmd_idx, cmd12, standby, acmd,
+							rsp_code, arg, len, buf,
+							cmnd->buf_len, 0);
 		if (retval != TRANSPORT_GOOD) {
 			kfree(buf);
 			TRACE_RET(chip, STATUS_FAIL);
@@ -160,8 +160,8 @@ static int rts51x_sd_get_rsp(struct rts51x_chip *chip, struct sd_rsp *rsp)
 
 	RTS51X_DEBUGP("Response length: %d\n", count);
 	RTS51X_DEBUGP("Response: 0x%x 0x%x 0x%x 0x%x\n",
-		       sd_card->rsp[0], sd_card->rsp[1], sd_card->rsp[2],
-		       sd_card->rsp[3]);
+				sd_card->rsp[0], sd_card->rsp[1], sd_card->rsp[2],
+				sd_card->rsp[3]);
 
 	return STATUS_SUCCESS;
 }
@@ -178,7 +178,7 @@ int rts51x_open(struct inode *inode, struct file *filp)
 	interface = usb_find_interface(&rts51x_driver, subminor);
 	if (!interface) {
 		RTS51X_DEBUGP("%s - error, can't find device for minor %d\n",
-			       __func__, subminor);
+					__func__, subminor);
 		retval = -ENODEV;
 		goto exit;
 	}
@@ -215,20 +215,20 @@ int rts51x_release(struct inode *inode, struct file *filp)
 		return -ENODEV;
 
 	/* Drop our reference to the host; the SCSI core will free it
-	 * (and "chip" along with it) when the refcount becomes 0. */
+	* (and "chip" along with it) when the refcount becomes 0. */
 	scsi_host_put(rts51x_to_host(chip));
 
 	return 0;
 }
 
 ssize_t rts51x_read(struct file *filp, char __user *buf, size_t count,
-		    loff_t *f_pos)
+			loff_t *f_pos)
 {
 	return 0;
 }
 
 ssize_t rts51x_write(struct file *filp, const char __user *buf, size_t count,
-		     loff_t *f_pos)
+			loff_t *f_pos)
 {
 	return 0;
 }
@@ -250,8 +250,8 @@ long rts51x_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 	switch (cmd) {
 	case RTS5139_IOC_SD_DIRECT:
 		retval =
-		    copy_from_user((void *)&cmnd, (void *)arg,
-				   sizeof(struct sd_direct_cmnd));
+			copy_from_user((void *)&cmnd, (void *)arg,
+					sizeof(struct sd_direct_cmnd));
 		if (retval) {
 			retval = -ENOMEM;
 			TRACE_GOTO(chip, exit);
@@ -265,8 +265,8 @@ long rts51x_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 
 	case RTS5139_IOC_SD_GET_RSP:
 		retval =
-		    copy_from_user((void *)&rsp, (void *)arg,
-				   sizeof(struct sd_rsp));
+			copy_from_user((void *)&rsp, (void *)arg,
+					sizeof(struct sd_rsp));
 		if (retval) {
 			retval = -ENOMEM;
 			TRACE_GOTO(chip, exit);

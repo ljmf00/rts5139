@@ -183,7 +183,7 @@
 
 int rts51x_reset_xd_card(struct rts51x_chip *chip);
 int rts51x_xd_rw(struct scsi_cmnd *srb, struct rts51x_chip *chip, u32 start_sector,
-	  u16 sector_cnt);
+	u16 sector_cnt);
 void rts51x_xd_free_l2p_tbl(struct rts51x_chip *chip);
 void rts51x_xd_cleanup_work(struct rts51x_chip *chip);
 int rts51x_release_xd_card(struct rts51x_chip *chip);

@@ -37,24 +37,24 @@
 #endif
 
 unsigned int rts51x_access_sglist(unsigned char *buffer,
-				  unsigned int buflen, void *sglist,
-				  void **sgptr, unsigned int *offset,
-				  enum xfer_buf_dir dir);
+	unsigned int buflen, void *sglist,
+	void **sgptr, unsigned int *offset,
+	enum xfer_buf_dir dir);
 void rts51x_set_xfer_buf(unsigned char *buffer, unsigned int buflen,
-			 struct scsi_cmnd *srb);
+	struct scsi_cmnd *srb);
 void rts51x_get_xfer_buf(unsigned char *buffer, unsigned int buflen,
-			 struct scsi_cmnd *srb);
+	struct scsi_cmnd *srb);
 
 int rts51x_ctrl_transfer(struct rts51x_chip *chip, unsigned int pipe,
-			 u8 request, u8 requesttype, u16 value, u16 index,
-			 void *data, u16 size, int timeout);
+	u8 request, u8 requesttype, u16 value, u16 index,
+	void *data, u16 size, int timeout);
 int rts51x_transfer_data(struct rts51x_chip *chip, unsigned int pipe,
-			 void *buf, unsigned int len, int use_sg,
-			 unsigned int *act_len, int timeout);
+	void *buf, unsigned int len, int use_sg,
+	unsigned int *act_len, int timeout);
 int rts51x_transfer_data_partial(struct rts51x_chip *chip, unsigned int pipe,
-				 void *buf, void **ptr, unsigned int *offset,
-				 unsigned int len, int use_sg,
-				 unsigned int *act_len, int timeout);
+	void *buf, void **ptr, unsigned int *offset,
+	unsigned int len, int use_sg,
+	unsigned int *act_len, int timeout);
 
 #ifndef POLLING_IN_THREAD
 int rts51x_start_epc_transfer(struct rts51x_chip *chip);

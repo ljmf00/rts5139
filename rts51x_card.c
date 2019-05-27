@@ -114,7 +114,7 @@ static void do_rts51x_reset_xd_card(struct rts51x_chip *chip)
 		rts51x_init_cmd(chip);
 		rts51x_add_cmd(chip, WRITE_REG_CMD, CARD_OE, XD_OUTPUT_EN, 0);
 		rts51x_add_cmd(chip, WRITE_REG_CMD, CARD_PWR_CTL, POWER_MASK,
-			       POWER_OFF);
+					POWER_OFF);
 		rts51x_add_cmd(chip, WRITE_REG_CMD, CARD_CLK_EN, XD_CLK_EN, 0);
 		rts51x_send_cmd(chip, MODE_C, 100);
 	}
@@ -141,7 +141,7 @@ void rts51x_do_rts51x_reset_sd_card(struct rts51x_chip *chip)
 		rts51x_init_cmd(chip);
 		rts51x_add_cmd(chip, WRITE_REG_CMD, CARD_OE, SD_OUTPUT_EN, 0);
 		rts51x_add_cmd(chip, WRITE_REG_CMD, CARD_PWR_CTL, POWER_MASK,
-			       POWER_OFF);
+					POWER_OFF);
 		rts51x_add_cmd(chip, WRITE_REG_CMD, CARD_CLK_EN, SD_CLK_EN, 0);
 		rts51x_send_cmd(chip, MODE_C, 100);
 	}
@@ -168,14 +168,14 @@ static void do_rts51x_reset_ms_card(struct rts51x_chip *chip)
 		rts51x_init_cmd(chip);
 		rts51x_add_cmd(chip, WRITE_REG_CMD, CARD_OE, MS_OUTPUT_EN, 0);
 		rts51x_add_cmd(chip, WRITE_REG_CMD, CARD_PWR_CTL, POWER_MASK,
-			       POWER_OFF);
+					POWER_OFF);
 		rts51x_add_cmd(chip, WRITE_REG_CMD, CARD_CLK_EN, MS_CLK_EN, 0);
 		rts51x_send_cmd(chip, MODE_C, 100);
 	}
 }
 
 static void card_cd_debounce(struct rts51x_chip *chip, u8 *need_reset,
-		      u8 *need_release)
+			u8 *need_release)
 {
 	int retval;
 	u8 release_map = 0, reset_map = 0;
@@ -193,7 +193,7 @@ static void card_cd_debounce(struct rts51x_chip *chip, u8 *need_reset,
 		retval = rts51x_read_register(chip, CARD_INT_PEND, &value);
 		if (retval != STATUS_SUCCESS) {
 			rts51x_ep0_write_register(chip, MC_FIFO_CTL, FIFO_FLUSH,
-						  FIFO_FLUSH);
+						FIFO_FLUSH);
 			rts51x_ep0_write_register(chip, SFSM_ED, 0xf8, 0xf8);
 			value = 0;
 		}
@@ -232,7 +232,7 @@ static void card_cd_debounce(struct rts51x_chip *chip, u8 *need_reset,
 
 		for (i = 0; i < (chip->option.debounce_num); i++) {
 			retval =
-			    rts51x_get_card_status(chip, &(chip->card_status));
+				rts51x_get_card_status(chip, &(chip->card_status));
 			if (retval != STATUS_SUCCESS) {
 				reset_map = release_map = 0;
 				goto Exit_Debounce;
@@ -254,20 +254,20 @@ static void card_cd_debounce(struct rts51x_chip *chip, u8 *need_reset,
 
 		reset_map = 0;
 		if (!(chip->card_exist & XD_CARD)
-		    && (xd_cnt > (chip->option.debounce_num - 1))) {
+			&& (xd_cnt > (chip->option.debounce_num - 1))) {
 			reset_map |= XD_CARD;
 		}
 		if (!(chip->card_exist & SD_CARD)
-		    && (sd_cnt > (chip->option.debounce_num - 1))) {
+			&& (sd_cnt > (chip->option.debounce_num - 1))) {
 			reset_map |= SD_CARD;
 		}
 		if (!(chip->card_exist & MS_CARD)
-		    && (ms_cnt > (chip->option.debounce_num - 1))) {
+			&& (ms_cnt > (chip->option.debounce_num - 1))) {
 			reset_map |= MS_CARD;
 		}
 	}
 	rts51x_write_register(chip, CARD_INT_PEND, XD_INT | MS_INT | SD_INT,
-			      XD_INT | MS_INT | SD_INT);
+				XD_INT | MS_INT | SD_INT);
 
 Exit_Debounce:
 	if (need_reset)
@@ -291,7 +291,7 @@ void rts51x_init_cards(struct rts51x_chip *chip)
 #ifdef SUPPORT_OCP
 		if (chip->ocp_stat & (MS_OCP_NOW | MS_OCP_EVER)) {
 			rts51x_write_register(chip, OCPCTL, MS_OCP_CLEAR,
-					      MS_OCP_CLEAR);
+						MS_OCP_CLEAR);
 			chip->ocp_stat = 0;
 			RTS51X_DEBUGP("Clear OCP status.\n");
 		}
@@ -304,7 +304,7 @@ void rts51x_init_cards(struct rts51x_chip *chip)
 				rts51x_release_xd_card(chip);
 				chip->rw_card[chip->card2lun[XD_CARD]] = NULL;
 				clear_bit(chip->card2lun[XD_CARD],
-					  &(chip->lun_mc));
+					&(chip->lun_mc));
 			}
 		}
 
@@ -315,7 +315,7 @@ void rts51x_init_cards(struct rts51x_chip *chip)
 				rts51x_release_sd_card(chip);
 				chip->rw_card[chip->card2lun[SD_CARD]] = NULL;
 				clear_bit(chip->card2lun[SD_CARD],
-					  &(chip->lun_mc));
+					&(chip->lun_mc));
 			}
 		}
 
@@ -326,7 +326,7 @@ void rts51x_init_cards(struct rts51x_chip *chip)
 				rts51x_release_ms_card(chip);
 				chip->rw_card[chip->card2lun[MS_CARD]] = NULL;
 				clear_bit(chip->card2lun[MS_CARD],
-					  &(chip->lun_mc));
+					&(chip->lun_mc));
 			}
 		}
 	}
@@ -401,7 +401,7 @@ int rts51x_switch_ssc_clock(struct rts51x_chip *chip, int clk)
 	if (mcu_cnt > 15)
 		mcu_cnt = 15;
 	/* To make sure that the SSC clock div_n is
-	 * equal or greater than min_N */
+	* equal or greater than min_N */
 	div = CLK_DIV_1;
 	while ((N < min_N) && (div < max_div)) {
 		N = (N + 2) * 2 - 2;
@@ -417,59 +417,59 @@ int rts51x_switch_ssc_clock(struct rts51x_chip *chip, int clk)
 				ssc_depth = chip->option.ssc_depth_sd_sdr50;
 			} else if (CHK_SD_DDR50(sd_card)) {
 				ssc_depth =
-				    double_depth(chip->option.
-						 ssc_depth_sd_ddr50);
+					double_depth(chip->option.
+						ssc_depth_sd_ddr50);
 			} else if (CHK_SD_HS(sd_card)) {
 				ssc_depth =
-				    double_depth(chip->option.ssc_depth_sd_hs);
+					double_depth(chip->option.ssc_depth_sd_hs);
 			} else if (CHK_MMC_52M(sd_card)
-				   || CHK_MMC_DDR52(sd_card)) {
+					|| CHK_MMC_DDR52(sd_card)) {
 				ssc_depth =
-				    double_depth(chip->option.
-						 ssc_depth_mmc_52m);
+					double_depth(chip->option.
+						ssc_depth_mmc_52m);
 			} else {
 				ssc_depth =
-				    double_depth(chip->option.
-						 ssc_depth_low_speed);
+					double_depth(chip->option.
+						ssc_depth_low_speed);
 			}
 		} else if (chip->cur_card == MS_CARD) {
 			if (CHK_MSPRO(ms_card)) {
 				if (CHK_HG8BIT(ms_card)) {
 					ssc_depth =
-					    double_depth(chip->option.
-							 ssc_depth_ms_hg);
+						double_depth(chip->option.
+							ssc_depth_ms_hg);
 				} else {
 					ssc_depth =
-					    double_depth(chip->option.
-							 ssc_depth_ms_4bit);
+						double_depth(chip->option.
+							ssc_depth_ms_4bit);
 				}
 			} else {
 				if (CHK_MS4BIT(ms_card)) {
 					ssc_depth =
-					    double_depth(chip->option.
-							 ssc_depth_ms_4bit);
+						double_depth(chip->option.
+							ssc_depth_ms_4bit);
 				} else {
 					ssc_depth =
-					    double_depth(chip->option.
-							 ssc_depth_low_speed);
+						double_depth(chip->option.
+							ssc_depth_low_speed);
 				}
 			}
 		} else {
 			ssc_depth =
-			    double_depth(chip->option.ssc_depth_low_speed);
+				double_depth(chip->option.ssc_depth_low_speed);
 		}
 
 		if (ssc_depth) {
 			if (div == CLK_DIV_2) {
 				/* If clock divided by 2, ssc depth must
-				 * be multiplied by 2 */
+				* be multiplied by 2 */
 				if (ssc_depth > 1)
 					ssc_depth -= 1;
 				else
 					ssc_depth = SSC_DEPTH_2M;
 			} else if (div == CLK_DIV_4) {
 				/* If clock divided by 4, ssc depth must
-				 * be multiplied by 4 */
+				* be multiplied by 4 */
 				if (ssc_depth > 2)
 					ssc_depth -= 2;
 				else
@@ -486,16 +486,16 @@ int rts51x_switch_ssc_clock(struct rts51x_chip *chip, int clk)
 	rts51x_init_cmd(chip);
 	rts51x_add_cmd(chip, WRITE_REG_CMD, CLK_DIV, CLK_CHANGE, CLK_CHANGE);
 	rts51x_add_cmd(chip, WRITE_REG_CMD, CLK_DIV, 0x3F,
-		       (div << 4) | mcu_cnt);
+				(div << 4) | mcu_cnt);
 	rts51x_add_cmd(chip, WRITE_REG_CMD, SSC_CTL1, SSC_RSTB, 0);
 	rts51x_add_cmd(chip, WRITE_REG_CMD, SSC_CTL2, SSC_DEPTH_MASK,
-		       ssc_depth);
+				ssc_depth);
 	rts51x_add_cmd(chip, WRITE_REG_CMD, SSC_DIV_N_0, 0xFF, N);
 	if (sd_vpclk_phase_reset) {
 		rts51x_add_cmd(chip, WRITE_REG_CMD, SD_VPCLK0_CTL,
-			       PHASE_NOT_RESET, 0);
+					PHASE_NOT_RESET, 0);
 		rts51x_add_cmd(chip, WRITE_REG_CMD, SD_VPCLK0_CTL,
-			       PHASE_NOT_RESET, PHASE_NOT_RESET);
+					PHASE_NOT_RESET, PHASE_NOT_RESET);
 	}
 
 	retval = rts51x_send_cmd(chip, MODE_C, 2000);
@@ -594,7 +594,7 @@ int rts51x_switch_normal_clock(struct rts51x_chip *chip, int clk)
 
 	default:
 		RTS51X_DEBUGP("Try to switch to an illegal clock (%d)\n",
-			       clk);
+					clk);
 		TRACE_RET(chip, STATUS_FAIL);
 	}
 
@@ -602,11 +602,11 @@ int rts51x_switch_normal_clock(struct rts51x_chip *chip, int clk)
 		rts51x_init_cmd(chip);
 
 		rts51x_add_cmd(chip, WRITE_REG_CMD, CLK_DIV, CLK_CHANGE,
-			       CLK_CHANGE);
+					CLK_CHANGE);
 		rts51x_add_cmd(chip, WRITE_REG_CMD, CLK_DIV, 0x3F,
-			       (div << 4) | mcu_cnt);
+					(div << 4) | mcu_cnt);
 		rts51x_add_cmd(chip, WRITE_REG_CMD, SSC_CLK_FPGA_SEL, 0xFF,
-			       sel);
+					sel);
 		rts51x_add_cmd(chip, WRITE_REG_CMD, CLK_DIV, CLK_CHANGE, 0);
 
 		retval = rts51x_send_cmd(chip, MODE_C, 100);
@@ -616,15 +616,15 @@ int rts51x_switch_normal_clock(struct rts51x_chip *chip, int clk)
 		rts51x_init_cmd(chip);
 
 		rts51x_add_cmd(chip, WRITE_REG_CMD, CLK_DIV, CLK_CHANGE,
-			       CLK_CHANGE);
+					CLK_CHANGE);
 		rts51x_add_cmd(chip, WRITE_REG_CMD, SD_VPCLK0_CTL,
-			       PHASE_NOT_RESET, 0);
+					PHASE_NOT_RESET, 0);
 		rts51x_add_cmd(chip, WRITE_REG_CMD, SD_VPCLK1_CTL,
-			       PHASE_NOT_RESET, 0);
+					PHASE_NOT_RESET, 0);
 		rts51x_add_cmd(chip, WRITE_REG_CMD, CLK_DIV, 0x3F,
-			       (div << 4) | mcu_cnt);
+					(div << 4) | mcu_cnt);
 		rts51x_add_cmd(chip, WRITE_REG_CMD, SSC_CLK_FPGA_SEL, 0xFF,
-			       sel);
+					sel);
 
 		retval = rts51x_send_cmd(chip, MODE_C, 100);
 		if (retval != STATUS_SUCCESS)
@@ -635,9 +635,9 @@ int rts51x_switch_normal_clock(struct rts51x_chip *chip, int clk)
 		rts51x_init_cmd(chip);
 
 		rts51x_add_cmd(chip, WRITE_REG_CMD, SD_VPCLK0_CTL,
-			       PHASE_NOT_RESET, PHASE_NOT_RESET);
+					PHASE_NOT_RESET, PHASE_NOT_RESET);
 		rts51x_add_cmd(chip, WRITE_REG_CMD, SD_VPCLK1_CTL,
-			       PHASE_NOT_RESET, PHASE_NOT_RESET);
+					PHASE_NOT_RESET, PHASE_NOT_RESET);
 
 		retval = rts51x_send_cmd(chip, MODE_C, 100);
 		if (retval != STATUS_SUCCESS)
@@ -664,7 +664,7 @@ int rts51x_card_rw(struct scsi_cmnd *srb, struct rts51x_chip *chip,
 		return STATUS_FAIL;
 
 	RTS51X_DEBUGP("%s card, sector addr: 0x%x, sector cnt: %d\n",
-		       (srb->sc_data_direction ==
+				(srb->sc_data_direction ==
 			DMA_TO_DEVICE) ? "Write" : "Read", sec_addr, sec_cnt);
 
 	chip->rw_need_retry = 0;
@@ -674,8 +674,8 @@ int rts51x_card_rw(struct scsi_cmnd *srb, struct rts51x_chip *chip,
 			CATCH_TRIGGER(chip);
 			if (chip->option.reset_or_rw_fail_set_pad_drive) {
 				rts51x_write_register(chip, CARD_DRIVE_SEL,
-						      SD20_DRIVE_MASK,
-						      DRIVE_8mA);
+							SD20_DRIVE_MASK,
+							DRIVE_8mA);
 			}
 		}
 
@@ -767,7 +767,7 @@ void rts51x_eject_card(struct rts51x_chip *chip, unsigned int lun)
 		chip->capacity[lun] = 0;
 	}
 	rts51x_write_register(chip, CARD_INT_PEND, XD_INT | MS_INT | SD_INT,
-			      XD_INT | MS_INT | SD_INT);
+				XD_INT | MS_INT | SD_INT);
 }
 
 void rts51x_trans_dma_enable(enum dma_data_direction dir,
@@ -777,24 +777,24 @@ void rts51x_trans_dma_enable(enum dma_data_direction dir,
 		pack_size = DMA_512;
 
 	rts51x_add_cmd(chip, WRITE_REG_CMD, CARD_DATA_SOURCE, 0x01,
-		       RING_BUFFER);
+				RING_BUFFER);
 
 	rts51x_add_cmd(chip, WRITE_REG_CMD, MC_DMA_TC3, 0xFF,
-		       (u8) (byte_cnt >> 24));
+				(u8) (byte_cnt >> 24));
 	rts51x_add_cmd(chip, WRITE_REG_CMD, MC_DMA_TC2, 0xFF,
-		       (u8) (byte_cnt >> 16));
+				(u8) (byte_cnt >> 16));
 	rts51x_add_cmd(chip, WRITE_REG_CMD, MC_DMA_TC1, 0xFF,
-		       (u8) (byte_cnt >> 8));
+				(u8) (byte_cnt >> 8));
 	rts51x_add_cmd(chip, WRITE_REG_CMD, MC_DMA_TC0, 0xFF, (u8) byte_cnt);
 
 	if (dir == DMA_FROM_DEVICE) {
 		rts51x_add_cmd(chip, WRITE_REG_CMD, MC_DMA_CTL,
-			       0x03 | DMA_PACK_SIZE_MASK,
-			       DMA_DIR_FROM_CARD | DMA_EN | pack_size);
+					0x03 | DMA_PACK_SIZE_MASK,
+					DMA_DIR_FROM_CARD | DMA_EN | pack_size);
 	} else {
 		rts51x_add_cmd(chip, WRITE_REG_CMD, MC_DMA_CTL,
-			       0x03 | DMA_PACK_SIZE_MASK,
-			       DMA_DIR_TO_CARD | DMA_EN | pack_size);
+					0x03 | DMA_PACK_SIZE_MASK,
+					DMA_DIR_TO_CARD | DMA_EN | pack_size);
 	}
 }
 
@@ -825,7 +825,7 @@ int rts51x_card_power_on(struct rts51x_chip *chip, u8 card)
 #ifdef SD_XD_IO_FOLLOW_PWR
 	if ((card == SD_CARD) || (card == XD_CARD)) {
 		RTS51X_WRITE_REG(chip, CARD_PWR_CTL, mask | LDO3318_PWR_MASK,
-				 val1 | LDO_SUSPEND);
+				val1 | LDO_SUSPEND);
 	} else {
 #endif
 		RTS51X_WRITE_REG(chip, CARD_PWR_CTL, mask, val1);
@@ -837,7 +837,7 @@ int rts51x_card_power_on(struct rts51x_chip *chip, u8 card)
 #ifdef SD_XD_IO_FOLLOW_PWR
 	if (card == SD_CARD) {
 		rts51x_write_register(chip, CARD_PWR_CTL, LDO3318_PWR_MASK,
-				      LDO_ON);
+					LDO_ON);
 	}
 #endif
 
@@ -880,7 +880,7 @@ int rts51x_toggle_gpio(struct rts51x_chip *chip, u8 gpio)
 		temp_reg ^= gpio_oe[gpio];
 		temp_reg &= 0xfe; /* bit 0 always set 0 */
 		retval =
-		    rts51x_ep0_write_register(chip, CARD_GPIO, 0x03, temp_reg);
+			rts51x_ep0_write_register(chip, CARD_GPIO, 0x03, temp_reg);
 		if (retval != STATUS_SUCCESS)
 			TRACE_RET(chip, STATUS_FAIL);
 	} else {
@@ -889,8 +889,8 @@ int rts51x_toggle_gpio(struct rts51x_chip *chip, u8 gpio)
 			TRACE_RET(chip, STATUS_FAIL);
 		temp_reg ^= gpio_output[gpio];
 		retval =
-		    rts51x_ep0_write_register(chip, CARD_GPIO, 0xFF,
-					      temp_reg | gpio_oe[gpio]);
+			rts51x_ep0_write_register(chip, CARD_GPIO, 0xFF,
+						temp_reg | gpio_oe[gpio]);
 		if (retval != STATUS_SUCCESS)
 			TRACE_RET(chip, STATUS_FAIL);
 	}
@@ -909,8 +909,8 @@ int rts51x_turn_on_led(struct rts51x_chip *chip, u8 gpio)
 	};
 
 	retval =
-	    rts51x_ep0_write_register(chip, CARD_GPIO, gpio_mask[gpio],
-				      gpio_oe[gpio]);
+		rts51x_ep0_write_register(chip, CARD_GPIO, gpio_mask[gpio],
+					gpio_oe[gpio]);
 	if (retval != STATUS_SUCCESS)
 		TRACE_RET(chip, STATUS_FAIL);
 
@@ -931,8 +931,8 @@ int rts51x_turn_off_led(struct rts51x_chip *chip, u8 gpio)
 	};
 
 	retval =
-	    rts51x_ep0_write_register(chip, CARD_GPIO, gpio_mask[gpio],
-				      gpio_oe[gpio] | gpio_output[gpio]);
+		rts51x_ep0_write_register(chip, CARD_GPIO, gpio_mask[gpio],
+					gpio_oe[gpio] | gpio_output[gpio]);
 	if (retval != STATUS_SUCCESS)
 		TRACE_RET(chip, STATUS_FAIL);
 

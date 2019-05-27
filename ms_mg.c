@@ -65,7 +65,7 @@ static int mg_send_ex_cmd(struct rts51x_chip *chip, u8 cmd, u8 entry_num)
 
 	for (i = 0; i < MS_MAX_RETRY_COUNT; i++) {
 		retval =
-		    ms_write_bytes(chip, PRO_EX_SET_CMD, 7, WAIT_INT, data, 8);
+		ms_write_bytes(chip, PRO_EX_SET_CMD, 7, WAIT_INT, data, 8);
 		if (retval == STATUS_SUCCESS)
 			break;
 	}
@@ -101,8 +101,8 @@ int mg_set_tpc_para_sub(struct rts51x_chip *chip, int type, u8 mg_entry_num)
 		buf[5] = mg_entry_num;
 	}
 	retval =
-	    ms_write_bytes(chip, PRO_WRITE_REG, (type == 0) ? 1 : 6,
-			   NO_WAIT_INT, buf, 6);
+	ms_write_bytes(chip, PRO_WRITE_REG, (type == 0) ? 1 : 6,
+				NO_WAIT_INT, buf, 6);
 	if (retval != STATUS_SUCCESS)
 		TRACE_RET(chip, retval);
 
@@ -110,15 +110,15 @@ int mg_set_tpc_para_sub(struct rts51x_chip *chip, int type, u8 mg_entry_num)
 }
 
 /**
-  * Get MagciGate ID and set Leaf ID to medium.
+ * Get MagciGate ID and set Leaf ID to medium.
 
-  * After receiving this SCSI command, adapter shall fulfill 2 tasks
-  * below in order:
-  * 1. send GET_ID TPC command to get MagicGate ID and hold it till
-  * Response&challenge CMD.
-  * 2. send SET_ID TPC command to medium with Leaf ID released by host
-  * in this SCSI CMD.
-  */
+ * After receiving this SCSI command, adapter shall fulfill 2 tasks
+ * below in order:
+ * 1. send GET_ID TPC command to get MagicGate ID and hold it till
+ * Response&challenge CMD.
+ * 2. send SET_ID TPC command to medium with Leaf ID released by host
+ * in this SCSI CMD.
+ */
 int rts51x_mg_set_leaf_id(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 {
 	int retval;
@@ -149,7 +149,7 @@ int rts51x_mg_set_leaf_id(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 	for (i = 0; i < 8; i++)
 		buf1[8 + i] = buf2[4 + i];
 	retval =
-	    ms_write_bytes(chip, PRO_WRITE_SHORT_DATA, 32, WAIT_INT, buf1, 32);
+	ms_write_bytes(chip, PRO_WRITE_SHORT_DATA, 32, WAIT_INT, buf1, 32);
 	if (retval != STATUS_SUCCESS) {
 		rts51x_set_sense_type(chip, lun, SENSE_TYPE_MG_KEY_FAIL_NOT_ESTAB);
 		TRACE_RET(chip, retval);
@@ -164,12 +164,12 @@ int rts51x_mg_set_leaf_id(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 }
 
 /**
-  * Send Local EKB to host.
+ * Send Local EKB to host.
 
-  * After receiving this SCSI command, adapter shall read the divided
-  * data(1536 bytes totally) from medium by using READ_LONG_DATA TPC
-  * for 3 times, and report data to host with data-length is 1052 bytes.
-  */
+ * After receiving this SCSI command, adapter shall read the divided
+ * data(1536 bytes totally) from medium by using READ_LONG_DATA TPC
+ * for 3 times, and report data to host with data-length is 1052 bytes.
+ */
 int rts51x_mg_get_local_EKB(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 {
 	int retval = STATUS_FAIL;
@@ -201,11 +201,11 @@ int rts51x_mg_get_local_EKB(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 	}
 
 	retval = ms_transfer_data(chip, MS_TM_AUTO_READ, PRO_READ_LONG_DATA,
-				  3, WAIT_INT, 0, 0, buf + 4, 1536);
+				3, WAIT_INT, 0, 0, buf + 4, 1536);
 	if (retval != STATUS_SUCCESS) {
 		rts51x_set_sense_type(chip, lun, SENSE_TYPE_MG_KEY_FAIL_NOT_AUTHEN);
 		rts51x_write_register(chip, CARD_STOP, MS_STOP | MS_CLR_ERR,
-				      MS_STOP | MS_CLR_ERR);
+				MS_STOP | MS_CLR_ERR);
 		TRACE_GOTO(chip, GetEKBFinish);
 	}
 	retval = mg_check_int_error(chip);
@@ -223,12 +223,12 @@ GetEKBFinish:
 }
 
 /**
-  * Send challenge(host) to medium.
+ * Send challenge(host) to medium.
 
-  * After receiving this SCSI command, adapter shall sequentially issues
-  * TPC commands to the medium for writing 8-bytes data as challenge
-  * by host within a short data packet.
-  */
+ * After receiving this SCSI command, adapter shall sequentially issues
+ * TPC commands to the medium for writing 8-bytes data as challenge
+ * by host within a short data packet.
+ */
 int rts51x_mg_chg(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 {
 	struct ms_info *ms_card = &(chip->ms_card);
@@ -253,7 +253,7 @@ int rts51x_mg_chg(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 	}
 
 	retval =
-	    ms_read_bytes(chip, PRO_READ_SHORT_DATA, 32, WAIT_INT, buf, 32);
+	ms_read_bytes(chip, PRO_READ_SHORT_DATA, 32, WAIT_INT, buf, 32);
 	if (retval != STATUS_SUCCESS) {
 		rts51x_set_sense_type(chip, lun, SENSE_TYPE_MG_INCOMPATIBLE_MEDIUM);
 		TRACE_RET(chip, retval);
@@ -269,7 +269,7 @@ int rts51x_mg_chg(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 	for (i = 0; i < 2500; i++) {
 		RTS51X_READ_REG(chip, MS_TRANS_CFG, &tmp);
 		if (tmp &
-		    (MS_INT_CED | MS_INT_CMDNK | MS_INT_BREQ | MS_INT_ERR))
+		(MS_INT_CED | MS_INT_CMDNK | MS_INT_BREQ | MS_INT_ERR))
 			break;
 
 		wait_timeout(1);
@@ -294,7 +294,7 @@ int rts51x_mg_chg(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 	for (i = 0; i < 24; i++)
 		buf[8 + i] = 0;
 	retval =
-	    ms_write_bytes(chip, PRO_WRITE_SHORT_DATA, 32, WAIT_INT, buf, 32);
+	ms_write_bytes(chip, PRO_WRITE_SHORT_DATA, 32, WAIT_INT, buf, 32);
 	if (retval != STATUS_SUCCESS) {
 		rts51x_set_sense_type(chip, lun, SENSE_TYPE_MG_INCOMPATIBLE_MEDIUM);
 		TRACE_RET(chip, retval);
@@ -311,15 +311,15 @@ int rts51x_mg_chg(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 }
 
 /**
-  * Send Response and Challenge data  to host.
+ * Send Response and Challenge data  to host.
 
-  * After receiving this SCSI command, adapter shall communicates with
-  * the medium, get parameters(HRd, Rms, MagicGateID) by using READ_SHORT_DATA
-  * TPC and send the data to host according to certain format required by
-  * MG-R specification.
-  * The paremeter MagicGateID is the one that adapter has obtained from
-  * the medium by TPC commands in Set Leaf ID command phase previously.
-  */
+ * After receiving this SCSI command, adapter shall communicates with
+ * the medium, get parameters(HRd, Rms, MagicGateID) by using READ_SHORT_DATA
+ * TPC and send the data to host according to certain format required by
+ * MG-R specification.
+ * The paremeter MagicGateID is the one that adapter has obtained from
+ * the medium by TPC commands in Set Leaf ID command phase previously.
+ */
 int rts51x_mg_get_rsp_chg(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 {
 	struct ms_info *ms_card = &(chip->ms_card);
@@ -343,7 +343,7 @@ int rts51x_mg_get_rsp_chg(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 	}
 
 	retval =
-	    ms_read_bytes(chip, PRO_READ_SHORT_DATA, 32, WAIT_INT, buf1, 32);
+	ms_read_bytes(chip, PRO_READ_SHORT_DATA, 32, WAIT_INT, buf1, 32);
 	if (retval != STATUS_SUCCESS) {
 		rts51x_set_sense_type(chip, lun, SENSE_TYPE_MG_KEY_FAIL_NOT_AUTHEN);
 		TRACE_RET(chip, retval);
@@ -383,12 +383,12 @@ int rts51x_mg_get_rsp_chg(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 }
 
 /**
-  * Send response(host) to medium.
+ * Send response(host) to medium.
 
-  * After receiving this SCSI command, adapter shall sequentially
-  * issues TPC commands to the medium for writing 8-bytes data as
-  * challenge by host within a short data packet.
-  */
+ * After receiving this SCSI command, adapter shall sequentially
+ * issues TPC commands to the medium for writing 8-bytes data as
+ * challenge by host within a short data packet.
+ */
 int rts51x_mg_rsp(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 {
 	struct ms_info *ms_card = &(chip->ms_card);
@@ -420,7 +420,7 @@ int rts51x_mg_rsp(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 	for (i = 0; i < 24; i++)
 		buf[8 + i] = 0;
 	retval =
-	    ms_write_bytes(chip, PRO_WRITE_SHORT_DATA, 32, WAIT_INT, buf, 32);
+	ms_write_bytes(chip, PRO_WRITE_SHORT_DATA, 32, WAIT_INT, buf, 32);
 	if (retval != STATUS_SUCCESS) {
 		rts51x_set_sense_type(chip, lun, SENSE_TYPE_MG_KEY_FAIL_NOT_AUTHEN);
 		TRACE_RET(chip, retval);
@@ -438,15 +438,15 @@ int rts51x_mg_rsp(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 
 /** * Send ICV data to host.
 
-  * After receiving this SCSI command, adapter shall read the divided
-  * data(1024 bytes totally) from medium by using READ_LONG_DATA TPC
-  * for 2 times, and report data to host with data-length is 1028 bytes.
-  *
-  * Since the extra 4 bytes data is just only a prefix to original data
-  * that read from medium, so that the 4-byte data pushed into Ring buffer
-  * precedes data transmission from medium to Ring buffer by DMA mechanism
-  * in order to get maximum performance and minimum code size simultaneously.
-  */
+ * After receiving this SCSI command, adapter shall read the divided
+ * data(1024 bytes totally) from medium by using READ_LONG_DATA TPC
+ * for 2 times, and report data to host with data-length is 1028 bytes.
+ *
+ * Since the extra 4 bytes data is just only a prefix to original data
+ * that read from medium, so that the 4-byte data pushed into Ring buffer
+ * precedes data transmission from medium to Ring buffer by DMA mechanism
+ * in order to get maximum performance and minimum code size simultaneously.
+ */
 int rts51x_mg_get_ICV(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 {
 	struct ms_info *ms_card = &(chip->ms_card);
@@ -479,11 +479,11 @@ int rts51x_mg_get_ICV(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 	}
 
 	retval = ms_transfer_data(chip, MS_TM_AUTO_READ, PRO_READ_LONG_DATA,
-				  2, WAIT_INT, 0, 0, buf + 4, 1024);
+				2, WAIT_INT, 0, 0, buf + 4, 1024);
 	if (retval != STATUS_SUCCESS) {
 		rts51x_set_sense_type(chip, lun, SENSE_TYPE_MEDIA_UNRECOVER_READ_ERR);
 		rts51x_write_register(chip, CARD_STOP, MS_STOP | MS_CLR_ERR,
-				      MS_STOP | MS_CLR_ERR);
+				MS_STOP | MS_CLR_ERR);
 		TRACE_GOTO(chip, GetICVFinish);
 	}
 	retval = mg_check_int_error(chip);
@@ -501,16 +501,16 @@ GetICVFinish:
 }
 
 /**
-  * Send ICV data to medium.
+ * Send ICV data to medium.
 
-  * After receiving this SCSI command, adapter shall receive 1028 bytes
-  * and write the later 1024 bytes to medium by WRITE_LONG_DATA TPC
-  * consecutively.
-  *
-  * Since the first 4-bytes data is just only a prefix to original data
-  * that sent by host, and it should be skipped by shifting DMA pointer
-  * before writing 1024 bytes to medium.
-  */
+ * After receiving this SCSI command, adapter shall receive 1028 bytes
+ * and write the later 1024 bytes to medium by WRITE_LONG_DATA TPC
+ * consecutively.
+ *
+ * Since the first 4-bytes data is just only a prefix to original data
+ * that sent by host, and it should be skipped by shifting DMA pointer
+ * before writing 1024 bytes to medium.
+ */
 int rts51x_mg_set_ICV(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 {
 	struct ms_info *ms_card = &(chip->ms_card);
@@ -559,16 +559,16 @@ int rts51x_mg_set_ICV(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 		rts51x_init_cmd(chip);
 
 		rts51x_add_cmd(chip, WRITE_REG_CMD, MS_TPC, 0xFF,
-			       PRO_WRITE_LONG_DATA);
+				PRO_WRITE_LONG_DATA);
 		rts51x_add_cmd(chip, WRITE_REG_CMD, MS_TRANS_CFG, 0xFF,
-			       WAIT_INT);
+				WAIT_INT);
 
 		rts51x_trans_dma_enable(DMA_TO_DEVICE, chip, 512, DMA_512);
 
 		rts51x_add_cmd(chip, WRITE_REG_CMD, MS_TRANSFER, 0xFF,
-			       MS_TRANSFER_START | MS_TM_NORMAL_WRITE);
+				MS_TRANSFER_START | MS_TM_NORMAL_WRITE);
 		rts51x_add_cmd(chip, CHECK_REG_CMD, MS_TRANSFER,
-			       MS_TRANSFER_END, MS_TRANSFER_END);
+				MS_TRANSFER_END, MS_TRANSFER_END);
 
 		retval = rts51x_send_cmd(chip, MODE_CDOR, 100);
 		if (retval != STATUS_SUCCESS) {
@@ -577,8 +577,8 @@ int rts51x_mg_set_ICV(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 		}
 
 		retval = rts51x_transfer_data_rcc(chip, SND_BULK_PIPE(chip),
-						  buf + 4 + i * 512, 512, 0,
-						  NULL, 3000, STAGE_DO);
+						buf + 4 + i * 512, 512, 0,
+						NULL, 3000, STAGE_DO);
 		if (retval != STATUS_SUCCESS) {
 			rts51x_clear_ms_error(chip);
 			if (ms_card->mg_auth == 0) {
@@ -590,7 +590,7 @@ int rts51x_mg_set_ICV(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 						SENSE_TYPE_MG_WRITE_ERR);
 			} else {
 				rts51x_set_sense_type(chip, lun,
-					       SENSE_TYPE_MG_WRITE_ERR);
+						SENSE_TYPE_MG_WRITE_ERR);
 			}
 			retval = STATUS_FAIL;
 			TRACE_GOTO(chip, SetICVFinish);
@@ -598,7 +598,7 @@ int rts51x_mg_set_ICV(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 
 		retval = rts51x_get_rsp(chip, 1, 3000);
 		if (CHECK_MS_TRANS_FAIL(chip, retval)
-		    || mg_check_int_error(chip)) {
+		|| mg_check_int_error(chip)) {
 			rts51x_clear_ms_error(chip);
 			if (ms_card->mg_auth == 0) {
 				if ((buf[5] & 0xC0) != 0)
@@ -609,7 +609,7 @@ int rts51x_mg_set_ICV(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 						SENSE_TYPE_MG_WRITE_ERR);
 			} else {
 				rts51x_set_sense_type(chip, lun,
-					       SENSE_TYPE_MG_WRITE_ERR);
+						SENSE_TYPE_MG_WRITE_ERR);
 			}
 			retval = STATUS_FAIL;
 			TRACE_GOTO(chip, SetICVFinish);
@@ -617,7 +617,7 @@ int rts51x_mg_set_ICV(struct scsi_cmnd *srb, struct rts51x_chip *chip)
 	}
 #else
 	retval = ms_transfer_data(chip, MS_TM_AUTO_WRITE, PRO_WRITE_LONG_DATA,
-				  2, WAIT_INT, 0, 0, buf + 4, 1024);
+				2, WAIT_INT, 0, 0, buf + 4, 1024);
 	if (retval != STATUS_SUCCESS) {
 		rts51x_clear_ms_error(chip);
 		if (ms_card->mg_auth == 0) {

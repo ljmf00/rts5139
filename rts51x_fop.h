@@ -47,9 +47,9 @@ struct sd_rsp {
 int rts51x_open(struct inode *inode, struct file *filp);
 int rts51x_release(struct inode *inode, struct file *filp);
 ssize_t rts51x_read(struct file *filp, char __user *buf, size_t count,
-		    loff_t *f_pos);
+	loff_t *f_pos);
 ssize_t rts51x_write(struct file *filp, const char __user *buf, size_t count,
-		     loff_t *f_pos);
+	loff_t *f_pos);
 long rts51x_ioctl(struct file *filp, unsigned int cmd, unsigned long arg);
 
 #endif

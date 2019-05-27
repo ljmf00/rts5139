@@ -102,7 +102,7 @@
 struct rts51x_chip;
 
 /*-----------------------------------
-    Start-Stop-Unit
+	Start-Stop-Unit
 -----------------------------------*/
 #define STOP_MEDIUM			0x00	/* access disable */
 #define MAKE_MEDIUM_READY		0x01	/* access enable */
@@ -110,7 +110,7 @@ struct rts51x_chip;
 #define LOAD_MEDIUM			0x03	/* load */
 
 /*-----------------------------------
-    STANDARD_INQUIRY
+	STANDARD_INQUIRY
 -----------------------------------*/
 #define QULIFIRE                0x00
 #define AENC_FNC                0x00
@@ -136,8 +136,8 @@ struct rts51x_chip;
 void rts51x_scsi_show_command(struct scsi_cmnd *srb);
 void rts51x_set_sense_type(struct rts51x_chip *chip, unsigned int lun, int sense_type);
 void rts51x_set_sense_data(struct rts51x_chip *chip, unsigned int lun, u8 err_code,
-		    u8 sense_key, u32 info, u8 asc, u8 ascq, u8 sns_key_info0,
-		    u16 sns_key_info1);
+	u8 sense_key, u32 info, u8 asc, u8 ascq, u8 sns_key_info0,
+	u16 sns_key_info1);
 
 int rts51x_scsi_handler(struct scsi_cmnd *srb, struct rts51x_chip *chip);
 
