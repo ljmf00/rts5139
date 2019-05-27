@@ -53,7 +53,8 @@ build:
   image: gcc
 
   before_script:
-    - apt update && apt -y install make
+    - apt update && apt -y install build-essential linux-headers-amd64
+    - ln -s `find /lib/modules/ -maxdepth 1 | tail -n1` /lib/modules/`uname -r` #FIXME: workaround for docker kernel host version
   script:
     - make
     - make install
