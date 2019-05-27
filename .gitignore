@@ -6,3 +6,10 @@
 
 .tmp_versions/
 *.ko
+
+# Node.js
+node_modules/
+package-lock.json
+
+# Visual Studio Code
+.vscode/ipch/
