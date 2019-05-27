@@ -25,6 +25,8 @@
 # Makefile for the RTS51xx USB Card Reader drivers.
 #
 
+KVERSION := $(shell uname -r)
+
 obj-m := rts5139.o
 
 ccflags-y := -Idrivers/scsi
@@ -43,10 +45,11 @@ rts5139-y :=				\
 		ms_mg.o
 
 all:
-	make -C /lib/modules/$(shell uname -r)/build/ M=$(PWD) modules
+	make -C /lib/modules/$(KVERSION)/build/ M=$(PWD) modules
 
 install:
-	cp rts5139.ko /lib/modules/$(shell uname -r)/kernel/drivers/scsi -f
+	mkdir -p /lib/modules/$(KVERSION)/kernel/drivers/scsi
+	cp rts5139.ko /lib/modules/$(KVERSION)/kernel/drivers/scsi -f
 
 clean:
-	make -C /lib/modules/$(shell uname -r)/build/ SUBDIRS=$(PWD) clean
+	make -C /lib/modules/$(KVERSION)/build/ SUBDIRS=$(PWD) clean
