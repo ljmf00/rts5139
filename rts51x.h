@@ -34,6 +34,7 @@
 #include <linux/mutex.h>
 #include <linux/cdrom.h>
 #include <linux/kernel.h>
+#include <linux/version.h>
 
 #include <scsi/scsi.h>
 #include <scsi/scsi_cmnd.h>
@@ -145,10 +146,20 @@ static inline void get_current_time(u8 *timeval_buf, int buf_len)
 #define scsi_unlock(host)	spin_unlock_irq(host->host_lock)
 #define scsi_lock(host)		spin_lock_irq(host->host_lock)
 
-#define GET_PM_USAGE_CNT(chip)	\
-	atomic_read(&((chip)->usb->pusb_intf->pm_usage_cnt))
-#define SET_PM_USAGE_CNT(chip, cnt)	\
-	atomic_set(&((chip)->usb->pusb_intf->pm_usage_cnt), (cnt))
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 0, 14))
+	/* see https://github.com/torvalds/linux/commit/c2b71462d294cf517a0bc6e4fd6424d7cee5596f#diff-d81b85761c12e5ebdcaca4309ff73cfe
+	 * and https://github.com/asymingt/rts5139/commit/9f3462183863d43f7951a7f66758848f7fc7adfc
+	 */
+	#define GET_DEV_POWER_USAGE_COUNT(chip)	\
+		atomic_read(&((chip)->usb->pusb_intf->dev.power.usage_count))
+	#define SET_DEV_POWER_USAGE_COUNT(chip, cnt)	\
+		atomic_set(&((chip)->usb->pusb_intf->dev.power.usage_count), (cnt))
+# else
+	#define GET_PM_USAGE_CNT(chip)	\
+		atomic_read(&((chip)->usb->pusb_intf->pm_usage_cnt))
+	#define SET_PM_USAGE_CNT(chip, cnt)	\
+		atomic_set(&((chip)->usb->pusb_intf->pm_usage_cnt), (cnt))
+# endif
 
 /* Compatible macros while we switch over */
 static inline void *usb_buffer_alloc(struct usb_device *dev, size_t size,
