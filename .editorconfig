@@ -66,7 +66,7 @@ indent_style = tab
 [*.{js,py}]
 charset = utf-8
 
-[*.{c,cpp,d}]
+[*.{c,h,cpp,d}]
 # C-style doc comments
 block_comment_start = /*
 block_comment = *
