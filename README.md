@@ -1,4 +1,4 @@
-# RTS5129/RTS5139
+# RTS5129/RTS5139 [![Gitlab CI](https://gitlab.com/aurorafossorg/utils/rts5139/badges/master/pipeline.svg)](https://gitlab.com/aurorafossorg/utils/rts5139/pipelines)
 
 ## Overview
 
