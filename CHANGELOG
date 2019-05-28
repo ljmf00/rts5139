@@ -1,2 +1,9 @@
 v1.0
 - Initial Release
+
+v1.05
+- Change version to driver version
+- Add Continuous Integration
+- Add compatibility for legacy kernel version
+- Change TODO list to the issue tracker
+- Fix compiler warnings
