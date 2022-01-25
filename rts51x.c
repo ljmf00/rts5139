@@ -334,7 +334,11 @@ static int rts51x_control_thread(void *__chip)
 
 		/* indicate that the command is done */
 		if (chip->srb->result != DID_ABORT << 16)
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 16, 0))
+			scsi_done(chip->srb);
+#else
 			chip->srb->scsi_done(chip->srb);
+#endif
 		else
 SkipForAbort :
 			RTS51X_DEBUGP("scsi command aborted\n");

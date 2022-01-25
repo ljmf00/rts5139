@@ -1994,7 +1994,11 @@ static int show_info(struct seq_file *m, struct Scsi_Host *host)
 
 /* queue a command */
 /* This is always called with scsi_lock(host) held */
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 16, 0))
+int queuecommand_lck(struct scsi_cmnd *srb)
+#else
 int queuecommand_lck(struct scsi_cmnd *srb, void (*done) (struct scsi_cmnd *))
+#endif
 {
 	struct rts51x_chip *chip = host_to_rts51x(srb->device->host);
 
@@ -2009,12 +2013,18 @@ int queuecommand_lck(struct scsi_cmnd *srb, void (*done) (struct scsi_cmnd *))
 	if (test_bit(FLIDX_DISCONNECTING, &chip->usb->dflags)) {
 		RTS51X_DEBUGP("Fail command during disconnect\n");
 		srb->result = DID_NO_CONNECT << 16;
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 16, 0))
+		scsi_done(srb);
+#else
 		done(srb);
+#endif
 		return 0;
 	}
 
 	/* enqueue the command and wake up the control thread */
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 16, 0))
 	srb->scsi_done = done;
+#endif
 	chip->srb = srb;
 	complete(&chip->usb->cmnd_ready);
 
