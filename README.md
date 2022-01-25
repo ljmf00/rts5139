@@ -1,4 +1,4 @@
-# RTS5129/RTS5139 [![Gitlab CI](https://gitlab.com/aurorafossorg/utils/rts5139/badges/master/pipeline.svg)](https://gitlab.com/aurorafossorg/utils/rts5139/pipelines) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/95256f87488f4568815991fb8a379728)](https://www.codacy.com/app/aurorafossorg/rts5139)
+# RTS5129/RTS5139
 
 ## Overview
 
