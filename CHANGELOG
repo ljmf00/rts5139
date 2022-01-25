@@ -7,3 +7,6 @@ v1.05
 - Add compatibility for legacy kernel version
 - Change TODO list to the issue tracker
 - Fix compiler warnings
+
+v1.06
+- Use scsi_done() directly on Linux 5.16
