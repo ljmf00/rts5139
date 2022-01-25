@@ -6,6 +6,7 @@
 
 .tmp_versions/
 *.ko
+rts5139.mod
 
 # Node.js
 node_modules/
