@@ -180,13 +180,21 @@ static inline void get_current_time(u8 *timeval_buf, int buf_len)
 static inline void *usb_buffer_alloc(struct usb_device *dev, size_t size,
 	gfp_t mem_flags, dma_addr_t *dma)
 {
+	#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 18, 0))
+	return kmalloc(size, mem_flags);
+	# else
 	return usb_alloc_coherent(dev, size, mem_flags, dma);
+	# endif
 }
 
 static inline void usb_buffer_free(struct usb_device *dev, size_t size,
 	void *addr, dma_addr_t dma)
 {
+	#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 18, 0))
+	return kfree(addr);
+	# else
 	return usb_free_coherent(dev, size, addr, dma);
+	# endif
 }
 
 /* Convert between us_data and the corresponding Scsi_Host */
